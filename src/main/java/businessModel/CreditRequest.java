@@ -4,7 +4,7 @@ public class CreditRequest {
 
     private String programCode;
 
-    private int creditQty;
+    private double creditQty;
 
     private boolean salaryClient;
 
@@ -24,11 +24,11 @@ public class CreditRequest {
         this.programCode = programCode;
     }
 
-    public int getCreditQty() {
+    public double getCreditQty() {
         return creditQty;
     }
 
-    public void setCreditQty(int creditQty) {
+    public void setCreditQty(double creditQty) {
         this.creditQty = creditQty;
     }
 
@@ -46,5 +46,16 @@ public class CreditRequest {
 
     public void setRate(double rate) {
         this.rate = rate;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CreditRequest{");
+        sb.append("programCode='").append(programCode).append('\'');
+        sb.append(", creditQty=").append(creditQty);
+        sb.append(", salaryClient=").append(salaryClient);
+        sb.append(", rate=").append(rate);
+        sb.append('}');
+        return sb.toString();
     }
 }

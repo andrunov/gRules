@@ -1,13 +1,24 @@
+import businessModel.CreditRequest;
+import exception.ParseException;
 import parserModel.ExcelParser;
+import ruleEngine.Rule;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, ParseException, NoSuchFieldException, NoSuchMethodException {
         ExcelParser parser = new ExcelParser();
         String dir = System.getProperty("user.dir");
         parser.readConditions(dir +  "\\Rule_01.xlsx");
-        System.out.println(parser.toString());
+        CreditRequest creditRequest = new CreditRequest("1.24.03", 200000, true);
+        System.out.println(creditRequest);
+        for (Rule rule : parser.getRuleMap().values()) {
+            rule.perform(creditRequest);
+        }
+        System.out.println(creditRequest);
+
+
 
     }
 }

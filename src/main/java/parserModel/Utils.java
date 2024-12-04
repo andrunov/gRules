@@ -2,6 +2,8 @@ package parserModel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import ruleEngine.Action;
+import ruleEngine.CompareType;
 
 import java.lang.reflect.Type;
 
@@ -61,6 +63,21 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static Object castTo(String val) {
+        Object result = val;
+        if (val.equalsIgnoreCase("true")
+                || val.equalsIgnoreCase("false")) {
+            result = Boolean.parseBoolean(val);
+        } else {
+            try {
+                result = Double.parseDouble(val);
+            } catch (Exception e) {
+
+            }
+        }
+        return result;
     }
 
 }

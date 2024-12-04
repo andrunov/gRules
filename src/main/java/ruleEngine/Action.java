@@ -6,12 +6,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class Action<P extends V,V> {
+public class Action<V> {
 
-    Object globalParameter;
-    Method method;
+    private Object globalParameter;
 
-    Field field;
+    private String methodOrField;
+    private Method method;
+
+    private Field field;
     private V value;
 
     public Action(Object globalParameter,  String methodOrName, V value) throws NoSuchMethodException, NoSuchFieldException, ParseException {
@@ -33,8 +35,57 @@ public class Action<P extends V,V> {
        }
     }
 
+    public Action() {
+    }
 
-    public void apply() throws IllegalAccessException, InvocationTargetException {
+
+
+    public Object getGlobalParameter() {
+        return globalParameter;
+    }
+
+    public void setGlobalParameter(Object globalParameter) {
+        this.globalParameter = globalParameter;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
+    public V getValue() {
+        return value;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+
+    public void apply(Object globalParameter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException, ParseException {
+        if (methodOrField != null) {
+            if (methodOrField.startsWith(".")) {
+                this.field = null;
+                this.method = globalParameter.getClass().getDeclaredMethod(methodOrField.substring(1), value.getClass());
+
+            } else {
+                this.field = globalParameter.getClass().getDeclaredField(methodOrField);
+                this.method = null;
+            }
+        } else {
+            throw new ParseException("Не передано имя поля или метода ");
+        }
+
         if (field != null) {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
@@ -45,7 +96,16 @@ public class Action<P extends V,V> {
         }
     }
 
+    public void setMethodOrField(String methodOrField) throws NoSuchMethodException, NoSuchFieldException, ParseException {
+        this.methodOrField = methodOrField;
+    }
 
-
-
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("Установлено ").append(methodOrField);
+        sb.append("=").append(value);
+        sb.append('}');
+        return sb.toString();
+    }
 }

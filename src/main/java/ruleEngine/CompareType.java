@@ -16,6 +16,10 @@ public enum CompareType {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     public static CompareType fromString(String text) {
         for (CompareType a : CompareType.values()) {
             if (a.value.equalsIgnoreCase(text)) {
@@ -24,4 +28,5 @@ public enum CompareType {
         }
         return null;
     }
+
 }
