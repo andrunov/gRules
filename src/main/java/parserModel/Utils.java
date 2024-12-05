@@ -2,10 +2,9 @@ package parserModel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import ruleEngine.Action;
-import ruleEngine.CompareType;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class Utils {
 
@@ -38,6 +37,9 @@ public class Utils {
     }
 
     public static Object getValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
         switch (cell.getCellType()) {
             case STRING:  {
                 return cell.getStringCellValue();
@@ -79,5 +81,7 @@ public class Utils {
         }
         return result;
     }
+
+
 
 }

@@ -18,8 +18,26 @@ import java.util.Map;
 
 public class ExcelParser {
 
-    private Map<Integer, List<String>> conditionMap;
-    private Map<Integer, Rule> ruleMap;
+    private static final String CONDITION= "#condition";
+    private static final String ACTION = "#action";
+    private static final String HEAD = "#head";
+    private static final String KEY = "#key";
+    private static final String VALUE = "#val";
+
+    private int headRow;
+    private List<Integer> keyList = new ArrayList<>();
+    private List<Integer> valueList  = new ArrayList<>();
+
+    //TODO remove
+    private List<Integer> conditionColumns = new ArrayList<>();
+    private List<Integer> actionColumns = new ArrayList<>();
+
+    Map<Integer, String> conditionMap = new HashMap<>();
+    Map<Integer, String> actionMap = new HashMap<>();
+    private Map<Integer, Rule> ruleMap  = new HashMap<>();
+
+    Sheet sheet;
+    List<CellRange<?>> ranges;
 
     int leftBorder = 0;
     int rightBorder = 0;
@@ -30,30 +48,152 @@ public class ExcelParser {
         return ruleMap;
     }
 
+    public void readSheet(String path) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
+        FileInputStream file = new FileInputStream(path);
+        Workbook workbook = new XSSFWorkbook(file);
+        sheet = workbook.getSheetAt(0);
+        initRanges();
+        readFirstColumn();
+        readHeader();
+        readKeys();
+        readRules();
+
+    }
+
+    private void initRanges() throws ClassNotFoundException {
+        ranges = new ArrayList<>();
+        for (CellRangeAddress range : sheet.getMergedRegions()) {
+            ranges.add(CellRange.of(range, sheet));
+        }
+    }
+
+    private void readFirstColumn() {
+        for (Row row : sheet) {
+            Cell cell = row.getCell(0);
+            Object value = Utils.getValue(cell);
+            if (value== null) {
+                value = lookUpАorRanges(cell);
+            }
+            if (value!=null && value.getClass().equals(String.class)) {
+                if (value.equals(HEAD)) {
+                    headRow = row.getRowNum();
+                } else if (value.equals(KEY)) {
+                    keyList.add(row.getRowNum());
+                } else if (value.equals(VALUE)) {
+                    valueList.add(row.getRowNum());
+                }
+            }
+        }
+    }
+
+    private void readHeader() {
+        for (Cell cell : sheet.getRow(headRow)) {
+            Object value = Utils.getValue(cell);
+            if (value== null) {
+                value = lookUpАorRanges(cell);
+            }
+            if (value!=null && value.getClass().equals(String.class)) {
+                if (value.equals(CONDITION)) {
+                   conditionColumns.add(cell.getColumnIndex());
+                } else if (value.equals(ACTION)) {
+                   actionColumns.add(cell.getColumnIndex());
+                }
+            }
+        }
+    }
+
+    private void readKeys() {
+        for (Integer keyRow : keyList) {
+            for (Cell cell : sheet.getRow(keyRow)) {
+                Object value = Utils.getValue(cell);
+                if (value == null) {
+                    value = lookUpАorRanges(cell);
+                }
+                if (value != null && value.getClass().equals(String.class)) {
+                    int columnIndex = cell.getColumnIndex();
+                    if (conditionColumns.contains(columnIndex)) {
+                        if (conditionMap.get(columnIndex) == null) {
+                            conditionMap.put(columnIndex, (String) value);
+                        } else {
+                            String oldValue = conditionMap.get(columnIndex);
+                            String newValue = String.format("%s.%s", oldValue, value);
+                            conditionMap.put(columnIndex, newValue);
+                        }
+                    } else if (actionColumns.contains(columnIndex)) {
+                        if (actionMap.get(columnIndex) == null) {
+                            actionMap.put(columnIndex, (String) value);
+                        } else {
+                            String oldValue = actionMap.get(columnIndex);
+                            String newValue = String.format("%s.%s", oldValue, value);
+                            actionMap.put(columnIndex, newValue);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private <V extends Comparable> void readRules() throws ParseException, NoSuchFieldException, NoSuchMethodException {
+        for (Integer ruleRow : valueList) {
+            for (Cell cell : sheet.getRow(ruleRow)) {
+                Rule rule = new Rule("Строка " + ruleRow);
+                ruleMap.put(ruleRow, rule);
+
+                V value = (V) Utils.getValue(cell);
+                if (value == null) {
+                    value = (V) lookUpАorRanges(cell);
+                }
+
+                if (conditionColumns.contains(cell.getColumnIndex())) {
+                    Condition<V> condition = new Condition<>();
+                    rule.getConditions().add(condition);
+                    condition.setParameterName(conditionMap.get(cell.getColumnIndex()));
+                    CompareType compareType = CompareType.EQUALS;
+                    if (value != null && value.getClass().equals(String.class)) {
+                        String strValue = (String) value;
+                        compareType = extractFrom(strValue);
+                        condition.setCompareType(compareType);
+                        strValue = cutOffCompareType(strValue, compareType);
+                        value = (V) Utils.castTo(strValue);
+                        condition.setValue(value);
+                    } else {
+                        condition.setCompareType(compareType);
+                        condition.setValue(value);
+                    }
+                } else if (actionColumns.contains(cell.getColumnIndex())) {
+                    Action<V> action = new Action<>();
+                    action.setMethodOrField(conditionMap.get(cell.getColumnIndex()));
+                    rule.setAction(action);
+                    if (value instanceof String) {
+                        String strValue = (String) value;
+                        value = (V) Utils.castTo(strValue);
+                        action.setValue(value);
+                    } else {
+                        action.setValue(value);
+                    }
+                }
+            }
+        }
+    }
+
+
+
     public  <V extends Comparable> void readConditions(String path) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
         FileInputStream file = new FileInputStream(path);
         Workbook workbook = new XSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0);
-        List<CellRange<?>> ranges = new ArrayList<>();
-        Map<Integer, String> keyMap = new HashMap<>();
-        conditionMap = new HashMap<>();
         ruleMap = new HashMap<>();
-
-
-        for (CellRangeAddress range : sheet.getMergedRegions()) {
-            ranges.add(CellRange.of(range, sheet));
-        }
+        initRanges();
 
         leftBorder = 0;
         rightBorder = 0;
         upBorder = -1;
-        downBorder = 10000000;
+        downBorder = Integer.MAX_VALUE;
 
         for (Row row : sheet) {
 
             Rule rule = null;
             if (acceptRow(row)) {
-                conditionMap.put(row.getRowNum(), new ArrayList<>());
                 rule = new Rule("Строка " + row.getRowNum());
                 ruleMap.put(row.getRowNum(), rule);
             }
@@ -62,47 +202,29 @@ public class ExcelParser {
 
             for (Cell cell : row) {
 
-                V value = null;
-                boolean isSlave = false;
-                if (cell.getCellType() == CellType.BLANK) {
-
-                    for (CellRange<?> range : ranges) {
-                        if (range.contains(cell)) {
-                            value = (V) range.getValue();
-                            columnCounter++;
-                            isSlave = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!isSlave) {
+                V value = (V) lookUpАorRanges(cell);
+                if (value == null) {
                     value = (V) Utils.getValue(cell);
-                    if (value instanceof String) {
-                        if (value.equals("start table")) {
-                            leftBorder = cell.getColumnIndex();
-                            upBorder = cell.getRowIndex() + 1;
-                        } else if (value.equals("end column")) {
-                            rightBorder = cell.getColumnIndex() + 1;
-                        } else if (value.equals("end table")) {
-                            downBorder = cell.getRowIndex();
-                        }
-                    }
-                    columnCounter++;
                 }
+                columnCounter++;
+
+                if (value.getClass().equals(String.class)) {
+
+                }
+
 
 
                 if (acceptKey(cell)) {
-                    keyMap.put(columnCounter, (String) value);
+                    conditionMap.put(columnCounter, (String) value);
                 } else if (acceptValue(cell)) {
 
-                    if (columnCounter < keyMap.size()) {
+                    if (columnCounter < conditionMap.size()) {
                         //conditions
                         //String strCondition = String.format("%-15.15s   %-15.15s", keyMap.get(columnCounter), value);
                         //conditionMap.get(row.getRowNum()).add(strCondition);
                         Condition<V> condition = new Condition<>();
                         rule.getConditions().add(condition);
-                        condition.setParameterName(keyMap.get(columnCounter));
+                        condition.setParameterName(conditionMap.get(columnCounter));
                         CompareType compareType = CompareType.EQUALS;
                         if (value instanceof String) {
                             String strValue = (String) value;
@@ -120,7 +242,7 @@ public class ExcelParser {
                         //String strCondition = String.format("%-15.15s   %-15.15s", keyMap.get(columnCounter), value);
                         //conditionMap.get(row.getRowNum()).add(strCondition);
                         Action<V> action = new Action<>();
-                        action.setMethodOrField(keyMap.get(columnCounter));
+                        action.setMethodOrField(conditionMap.get(columnCounter));
                         rule.setAction(action);
                         if (value instanceof String) {
                             String strValue = (String) value;
@@ -133,10 +255,20 @@ public class ExcelParser {
                 }
 
             }
-            conditionMap.remove(downBorder);
             ruleMap.remove(downBorder);
 
         }
+    }
+
+    public Object lookUpАorRanges(Cell cell) {
+        if (cell != null && cell.getCellType() == CellType.BLANK) {
+            for (CellRange<?> range : ranges) {
+                if (range.contains(cell)) {
+                    return range.getValue();
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -174,20 +306,5 @@ public class ExcelParser {
         return value;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        List<Integer> conditionNumbers = new ArrayList<>(conditionMap.keySet());
-        conditionNumbers.sort((o1, o2) -> o1 - o2);
-        for (Integer integer : conditionNumbers) {
-            sb.append(String.format("Row %s:\n", integer));
-            sb.append("--------------------------------\n");
-            List<String> conditions = conditionMap.get(integer);
-            for (String condition : conditions) {
-                sb.append(String.format("%s\n",condition));
-            }
-            sb.append("================================\n");
-        }
-        return sb.toString();
-    }
+
 }
