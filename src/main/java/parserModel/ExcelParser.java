@@ -21,8 +21,9 @@ public class ExcelParser {
     private static final String CONDITION= "#condition";
     private static final String ACTION = "#action";
     private static final String HEAD = "#head";
-    private static final String KEY = "#key";
-    private static final String VALUE = "#val";
+    private static final String CLASS = "#key";
+    private static final String FIELD = "#field";
+    private static final String VALUE = "#rule";
 
     private int headRow;
     private List<Integer> keyList = new ArrayList<>();
@@ -77,7 +78,7 @@ public class ExcelParser {
             if (value!=null && value.getClass().equals(String.class)) {
                 if (value.equals(HEAD)) {
                     headRow = row.getRowNum();
-                } else if (value.equals(KEY)) {
+                } else if (value.equals(CLASS)) {
                     keyList.add(row.getRowNum());
                 } else if (value.equals(VALUE)) {
                     valueList.add(row.getRowNum());
