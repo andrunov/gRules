@@ -73,18 +73,6 @@ public class Action<V> {
     }
 
     public void apply(Object globalParameter) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException, ParseException {
-        if (methodOrField != null) {
-            if (methodOrField.startsWith(".")) {
-                this.field = null;
-                this.method = globalParameter.getClass().getDeclaredMethod(methodOrField.substring(1), value.getClass());
-
-            } else {
-                this.field = globalParameter.getClass().getDeclaredField(methodOrField);
-                this.method = null;
-            }
-        } else {
-            throw new ParseException("Не передано имя поля или метода ");
-        }
 
         if (field != null) {
             if (!field.isAccessible()) {
@@ -103,7 +91,7 @@ public class Action<V> {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
-        sb.append("Установлено ").append(methodOrField);
+        sb.append("Установлено ").append(field.getName());
         sb.append("=").append(value);
         sb.append('}');
         return sb.toString();

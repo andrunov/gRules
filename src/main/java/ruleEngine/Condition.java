@@ -5,30 +5,23 @@ import java.util.Collection;
 
 public class Condition<V extends Comparable> {
 
-    private String parameterName;
+    private Field field;
     private V parameter;
     private CompareType compareType;
     private V value;
 
-    public Condition(Object globalParameter, String fieldName, CompareType compareType, V value) throws NoSuchFieldException, IllegalAccessException {
-        this.parameterName = fieldName;
-        this.compareType = compareType;
-        this.value = value;
-        Field field = globalParameter.getClass().getDeclaredField(parameterName);
-        field.setAccessible(true);
-        parameter = (V) field.get(globalParameter);
-    }
+
 
     public Condition() {
 
     }
 
-    public String getParameterName() {
-        return parameterName;
+    public Field getField() {
+        return field;
     }
 
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
+    public void setField(Field field) {
+        this.field = field;
     }
 
     public V getParameter() {
@@ -60,8 +53,9 @@ public class Condition<V extends Comparable> {
         boolean result = false;
 
         try {
-            Field field = globalParameter.getClass().getDeclaredField(parameterName);
-            field.setAccessible(true);
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
+            }
             parameter = (V) field.get(globalParameter);
         } catch (Exception e) {
             return result;
@@ -115,6 +109,6 @@ public class Condition<V extends Comparable> {
 
     @Override
     public String toString() {
-        return parameterName + compareType.getValue() + value + "; ";
+        return field.getName() + compareType.getValue() + value + "; ";
     }
 }
