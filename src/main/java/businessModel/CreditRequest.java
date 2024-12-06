@@ -10,10 +10,20 @@ public class CreditRequest {
 
     private double rate;
 
+    private Borrower borrower;
+
     public CreditRequest(String programCode, int creditQty, boolean salaryClient) {
         this.programCode = programCode;
         this.creditQty = creditQty;
         this.salaryClient = salaryClient;
+    }
+
+    public Borrower getBorrower() {
+        return borrower;
+    }
+
+    public void setBorrower(Borrower borrower) {
+        this.borrower = borrower;
     }
 
     public String getProgramCode() {

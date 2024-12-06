@@ -21,11 +21,13 @@ public class ExcelParser {
     private static final String CONDITION= "#condition";
     private static final String ACTION = "#action";
     private static final String HEAD = "#head";
+    private static final String DIR = "#dir";
     private static final String CLASS = "#class";
     private static final String FIELD = "#field";
     private static final String VALUE = "#rule";
 
     private int headRow;
+    private List<Integer> dirList = new ArrayList<>();
     private List<Integer> classList = new ArrayList<>();
     private List<Integer> fieldList = new ArrayList<>();
     private List<Integer> ruleList = new ArrayList<>();
@@ -43,14 +45,14 @@ public class ExcelParser {
     public void readSheet(String path) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
         FileInputStream file = new FileInputStream(path);
         Workbook workbook = new XSSFWorkbook(file);
-        sheet = workbook.getSheetAt(0);
+        sheet = workbook.getSheetAt(1);
         initRanges();
         readFirstColumn();
         readHeader();
-        readKeys();
+        readClasses();
+        readFields();
+        readDirs();
         readRules();
-        int i = 5;
-
     }
 
     private void initRanges() throws ClassNotFoundException {
@@ -70,6 +72,8 @@ public class ExcelParser {
             if (value!=null && value.getClass().equals(String.class)) {
                 if (value.equals(HEAD)) {
                     headRow = row.getRowNum();
+                } else if (value.equals(DIR)) {
+                    dirList.add(row.getRowNum());
                 } else if (value.equals(CLASS)) {
                     classList.add(row.getRowNum());
                 } else if (value.equals(FIELD)) {
@@ -97,9 +101,28 @@ public class ExcelParser {
         }
     }
 
-    private void readKeys() {
-        for (Integer keyRow : classList) {
-            for (Cell cell : sheet.getRow(keyRow)) {
+    private void readDirs() {
+        for (Integer row : dirList) {
+            for (Cell cell : sheet.getRow(row)) {
+                Object value = Utils.getValue(cell);
+                if (value == null) {
+                    value = lookUpАorRanges(cell);
+                }
+                if (value != null && value.getClass().equals(String.class)) {
+                    int columnIndex = cell.getColumnIndex();
+                    if (conditionColumns.contains(columnIndex)) {
+                        conditionMap.get(columnIndex).setDirName((String) value);
+                    } else if (actionColumns.contains(columnIndex)) {
+                        actionMap.get(columnIndex).setDirName((String) value);
+                    }
+                }
+            }
+        }
+    }
+
+    private void readClasses() {
+        for (Integer row : classList) {
+            for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
                     value = lookUpАorRanges(cell);
@@ -114,8 +137,11 @@ public class ExcelParser {
                 }
             }
         }
-        for (Integer keyRow : fieldList) {
-            for (Cell cell : sheet.getRow(keyRow)) {
+    }
+
+    private void readFields() {
+        for (Integer row : fieldList) {
+            for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
                     value = lookUpАorRanges(cell);
