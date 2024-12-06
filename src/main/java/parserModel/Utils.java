@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
@@ -82,6 +83,22 @@ public class Utils {
         return result;
     }
 
+    public static String removeRowSplitters(String string) {
+        char[] chars = string.toCharArray();
+        List<Character> listCh = new ArrayList<>();
+        for (char ch : chars) {
+            if (ch != '\n') {
+                listCh.add(ch);
+            }
+        }
+        char[] result = new char[listCh.size()];
+        int i = 0;
+        for (char ch : listCh) {
+            result[i] = ch;
+            i++;
+        }
+        return new String(result);
+    }
 
 
 }

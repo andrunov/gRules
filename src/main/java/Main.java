@@ -12,7 +12,7 @@ public class Main {
         ExcelParser parser = new ExcelParser();
         String dir = System.getProperty("user.dir");
         parser.readSheet(dir +  "\\Rule_01.xlsx");
-        CreditRequest creditRequest = new CreditRequest("1.24.01", 100000, false);
+        CreditRequest creditRequest = new CreditRequest("1.24.01", 350000, false);
         System.out.println();
         System.out.println(creditRequest);
         for (Rule rule : parser.getRuleMap().values()) {

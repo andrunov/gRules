@@ -148,10 +148,11 @@ public class ExcelParser {
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
+                    String strValue = Utils.removeRowSplitters((String) value);
                     if (conditionColumns.contains(columnIndex)) {
-                        conditionMap.get(columnIndex).setFieldName((String) value);
+                        conditionMap.get(columnIndex).setFieldName(strValue);
                     } else if (actionColumns.contains(columnIndex)) {
-                        actionMap.get(columnIndex).setFieldName((String) value);
+                        actionMap.get(columnIndex).setFieldName(strValue);
                     }
                 }
             }

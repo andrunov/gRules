@@ -3,6 +3,7 @@ package ruleEngine;
 import businessModel.Borrower;
 import businessModel.CreditRequest;
 import exception.ParseException;
+import parserModel.Utils;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -12,9 +13,8 @@ public class RuleEngine {
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
         creditRequest.setBorrower(borrower);
-        String name = "borrower.salaryClient";
-//        Field field = creditRequest.getClass().getDeclaredField(split[0]);
-//        Field field2 = field.getDeclaringClass().getDeclaredField(split[1]);
+        String name = "borrower.\nsalaryClient";
+        System.out.println(Utils.removeRowSplitters(name));
 
     }
 
