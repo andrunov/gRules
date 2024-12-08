@@ -33,8 +33,8 @@ public class ExcelParser {
     private List<Integer> ruleList = new ArrayList<>();
     private List<Integer> conditionColumns = new ArrayList<>();
     private List<Integer> actionColumns = new ArrayList<>();
-    Map<Integer, FieldDescriptor> conditionMap = new HashMap<Integer, FieldDescriptor>();
-    Map<Integer, FieldDescriptor> actionMap = new HashMap<Integer, FieldDescriptor>();
+    Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
+    Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
     private Map<Integer, Rule> ruleMap  = new HashMap<>();
     Sheet sheet;
     List<CellRange<?>> ranges;
@@ -52,6 +52,7 @@ public class ExcelParser {
         readClasses();
         readFields();
         readDirs();
+        extractParameters();
         readRules();
     }
 
@@ -120,6 +121,15 @@ public class ExcelParser {
         }
     }
 
+    private void extractParameters() throws NoSuchFieldException, ClassNotFoundException {
+        for (FieldDescriptor fieldDescriptor : conditionMap.values()) {
+            fieldDescriptor.extractFieldAndPar();
+        }
+        for (FieldDescriptor fieldDescriptor : actionMap.values()) {
+            fieldDescriptor.extractFieldAndPar();
+        }
+    }
+
     private void readClasses() {
         for (Integer row : classList) {
             for (Cell cell : sheet.getRow(row)) {
@@ -173,7 +183,8 @@ public class ExcelParser {
                 if (conditionColumns.contains(cell.getColumnIndex())) {
                     Condition<V> condition = new Condition<>();
                     rule.getConditions().add(condition);
-                    condition.setField(conditionMap.get(cell.getColumnIndex()).extractField());
+                    condition.setField(conditionMap.get(cell.getColumnIndex()).getField());
+                    condition.setParameterPath(conditionMap.get(cell.getColumnIndex()).getParameterPath());
                     CompareType compareType = CompareType.EQUALS;
                     if (value != null && value.getClass().equals(String.class)) {
                         String strValue = (String) value;
@@ -189,7 +200,7 @@ public class ExcelParser {
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
                     Action<V> action = new Action<>();
 
-                    action.setField(actionMap.get(cell.getColumnIndex()).extractField());
+                    action.setField(actionMap.get(cell.getColumnIndex()).getField());
                     rule.setAction(action);
                     if (value instanceof String) {
                         String strValue = (String) value;

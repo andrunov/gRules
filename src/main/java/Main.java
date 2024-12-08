@@ -1,3 +1,5 @@
+import businessModel.Borrower;
+import businessModel.BorrowerType;
 import businessModel.CreditRequest;
 import exception.ParseException;
 import parserModel.ExcelParser;
@@ -12,7 +14,11 @@ public class Main {
         ExcelParser parser = new ExcelParser();
         String dir = System.getProperty("user.dir");
         parser.readSheet(dir +  "\\Rule_01.xlsx");
-        CreditRequest creditRequest = new CreditRequest("1.24.01", 350000, false);
+        CreditRequest creditRequest = new CreditRequest("1.24.01", 350000);
+        Borrower borrower = new Borrower();
+        borrower.setSalaryClient(true);
+        borrower.setBorrowerType(BorrowerType.GAZPROM);
+        creditRequest.setBorrower(borrower);
         System.out.println();
         System.out.println(creditRequest);
         for (Rule rule : parser.getRuleMap().values()) {

@@ -1,14 +1,18 @@
 package parserModel;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class FieldDescriptor {
 
     private String dirName;
     private String className;
-
     private String fieldName;
+    private Field field;
+    private List<String> parameterPath = new ArrayList<>();
+
 
     public FieldDescriptor(String className) {
         this.className = className;
@@ -18,19 +22,21 @@ public class FieldDescriptor {
         return Class.forName(String.format("%s.%s",dirName,className));
     }
 
-    public Field extractField() throws NoSuchFieldException, ClassNotFoundException {
+    public void extractFieldAndPar() throws NoSuchFieldException, ClassNotFoundException {
         String[] splitPath = fieldName.split("\\.");
+        parameterPath.add(splitPath[0]);
         Field field =extractClass().getDeclaredField(splitPath[0]);
         String[] remain = Arrays.copyOfRange(splitPath, 1, splitPath.length);
         if (remain.length == 0) {
-            return field;
+            this.field = field;
         } else {
-            return getField(field, remain);
+            this.field =  getField(field, remain);
         }
     }
 
     private Field getField(Field field, String[] path) throws NoSuchFieldException {
-        Field firstField = field.getDeclaringClass().getDeclaredField(path[0]);
+        Field firstField = field.getType().getDeclaredField(path[0]);
+        parameterPath.add(path[0]);
         String[] remain = Arrays.copyOfRange(path, 1, path.length);
         if (remain.length == 0) {
             return firstField;
@@ -61,5 +67,21 @@ public class FieldDescriptor {
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
+    }
+
+    public List<String> getParameterPath() {
+        return parameterPath;
+    }
+
+    public void setParameterPath(List<String> parameterPath) {
+        this.parameterPath = parameterPath;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
     }
 }

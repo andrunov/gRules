@@ -6,16 +6,13 @@ public class CreditRequest {
 
     private double creditQty;
 
-    private boolean salaryClient;
-
     private double rate;
 
     private Borrower borrower;
 
-    public CreditRequest(String programCode, int creditQty, boolean salaryClient) {
+    public CreditRequest(String programCode, int creditQty) {
         this.programCode = programCode;
         this.creditQty = creditQty;
-        this.salaryClient = salaryClient;
     }
 
     public Borrower getBorrower() {
@@ -42,14 +39,6 @@ public class CreditRequest {
         this.creditQty = creditQty;
     }
 
-    public boolean isSalaryClient() {
-        return salaryClient;
-    }
-
-    public void setSalaryClient(boolean salaryClient) {
-        this.salaryClient = salaryClient;
-    }
-
     public double getRate() {
         return rate;
     }
@@ -63,8 +52,8 @@ public class CreditRequest {
         final StringBuilder sb = new StringBuilder("CreditRequest{");
         sb.append("programCode='").append(programCode).append('\'');
         sb.append(", creditQty=").append(creditQty);
-        sb.append(", salaryClient=").append(salaryClient);
         sb.append(", rate=").append(rate);
+        sb.append(", borrower=").append(borrower);
         sb.append('}');
         return sb.toString();
     }
