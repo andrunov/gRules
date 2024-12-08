@@ -16,7 +16,6 @@ public class RuleEngine {
         borrower.setSalaryClient(true);
         borrower.setBorrowerType(BorrowerType.GAZPROM);
         creditRequest.setBorrower(borrower);
-
         Class<?> clazz = Class.forName("businessModel.CreditRequest");
         Field field1 = clazz.getDeclaredField("borrower");
         field1.setAccessible(true);
@@ -24,6 +23,18 @@ public class RuleEngine {
         Field field = clazz.getDeclaredField("borrower").getType().getDeclaredField("borrowerType");
         field.setAccessible(true);
         Object obj = field.get(obj1);
+       // System.out.println(obj.getClass());
+        String borType = "GAZPROM";
+        Class<?> enumm = obj.getClass();
+
+
+        if (obj.getClass().equals(BorrowerType.class)) {
+            System.out.println(enumm);
+            if (obj.equals(borType)) {
+                System.out.println("Success !!!");
+            }
+
+        }
 
         System.out.println(obj);
 

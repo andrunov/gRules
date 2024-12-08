@@ -1,8 +1,9 @@
 package parserModel;
 
+import businessModel.BorrowerType;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,20 @@ public class Utils {
         }
         return new String(result);
     }
+
+    public static Object parseEnum(String strValue, Field field) {
+        Class<?> clazz = field.getType();
+        if (clazz.isEnum()) {
+           for (Object enumVal : field.getType().getEnumConstants()) {
+               if (enumVal.toString().equals(strValue)) {
+                   return enumVal;
+               }
+           }
+        }
+        return null;
+    }
+
+
 
 
 }

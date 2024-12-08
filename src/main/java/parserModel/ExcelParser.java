@@ -191,8 +191,13 @@ public class ExcelParser {
                         compareType = extractFrom(strValue);
                         condition.setCompareType(compareType);
                         strValue = cutOffCompareType(strValue, compareType);
-                        value = (V) Utils.castTo(strValue);
-                        condition.setValue(value);
+                        Object enumValue = Utils.parseEnum(strValue, condition.getField());
+                        if (enumValue != null) {
+                            condition.setValue((V) enumValue);
+                        } else {
+                            value = (V) Utils.castTo(strValue);
+                            condition.setValue(value);
+                        }
                     } else {
                         condition.setCompareType(compareType);
                         condition.setValue(value);
