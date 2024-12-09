@@ -2,20 +2,17 @@ package ruleEngine;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.List;
 
-public class Condition<V extends Comparable> {
+public class Condition<V extends Comparable> extends LogicAtom {
 
     private Field field;
     private V parameter;
-    private List<String> parameterPath;
     private CompareType compareType;
     private V value;
 
 
 
     public Condition() {
-
     }
 
     public Field getField() {
@@ -42,14 +39,6 @@ public class Condition<V extends Comparable> {
         this.compareType = compareType;
     }
 
-    public List<String> getParameterPath() {
-        return parameterPath;
-    }
-
-    public void setParameterPath(List<String> parameterPath) {
-        this.parameterPath = parameterPath;
-    }
-
     public V getValue() {
         return value;
     }
@@ -58,6 +47,7 @@ public class Condition<V extends Comparable> {
         this.value = value;
     }
 
+    @Override
     public boolean apply(Object globalParameter) {
 
         boolean result = false;
@@ -66,7 +56,7 @@ public class Condition<V extends Comparable> {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            parameter = (V) extractParameter(globalParameter, 0);
+            parameter = (V) extract(globalParameter);
         } catch (Exception e) {
             return result;
         }
@@ -117,35 +107,15 @@ public class Condition<V extends Comparable> {
         return false;
     }
 
-    private Object extractParameter(Object globalParameter, int index) throws NoSuchFieldException, IllegalAccessException {
-         Field field = globalParameter.getClass().getDeclaredField(parameterPath.get(index));
-         if (!field.isAccessible()) {
-             field.setAccessible(true);
-         }
-         Object obj = field.get(globalParameter);
-         if (parameterPath.size() == index + 1) {
-             return obj;
-         } else {
-             return extractParameter(obj, index + 1);
-         }
-    }
 
-    private Field extractField(Field field, int index) throws NoSuchFieldException {
-        Field resultField = field.getType().getDeclaredField(parameterPath.get(index));
-        if (parameterPath.size() == index + 1) {
-            return resultField;
-        } else {
-            return extractField(resultField, index + 1);
-        }
-    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int counter = 0;
-        for (String par : parameterPath) {
+        for (String par : super.getParameterPath()) {
             counter ++;
-            if (parameterPath.size() > counter) {
+            if (super.getParameterPath().size() > counter) {
                 sb.append(String.format("%s.", par));
             } else {
                 sb.append(String.format("%s ", par));
