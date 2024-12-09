@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class LogicAtom implements Applyable{
 
-    private List<String> parameterPath;
+    protected List<String> parameterPath;
 
     public List<String> getParameterPath() {
         return parameterPath;

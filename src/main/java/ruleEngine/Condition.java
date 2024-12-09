@@ -113,7 +113,7 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int counter = 0;
-        for (String par : super.getParameterPath()) {
+        for (String par : parameterPath) {
             counter ++;
             if (super.getParameterPath().size() > counter) {
                 sb.append(String.format("%s.", par));
