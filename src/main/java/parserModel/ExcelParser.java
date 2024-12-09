@@ -169,7 +169,7 @@ public class ExcelParser {
         }
     }
 
-    private <V extends Comparable> void readRules() throws NoSuchFieldException, ClassNotFoundException {
+    private <V extends Comparable<V>> void readRules() throws NoSuchFieldException, ClassNotFoundException {
         for (Integer ruleRow : ruleList) {
             Rule rule = new Rule("Строка " + (ruleRow + 1)); //TODO разобраться откуда лишняя единица в нумерации
             ruleMap.put(ruleRow, rule);

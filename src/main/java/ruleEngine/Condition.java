@@ -3,7 +3,7 @@ package ruleEngine;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-public class Condition<V extends Comparable> extends LogicAtom {
+public class Condition<V extends Comparable<V>> extends LogicAtom {
 
     private Field field;
     private V parameter;
