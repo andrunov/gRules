@@ -6,7 +6,7 @@ public class CreditRequest {
 
     private double creditQty;
 
-    private Double rate;
+    private double rate;
 
     private Borrower borrower;
 
@@ -39,11 +39,11 @@ public class CreditRequest {
         this.creditQty = creditQty;
     }
 
-    public Double getRate() {
+    public double getRate() {
         return rate;
     }
 
-    public void setRate(Double rate) {
+    public void setRate(double rate) {
         this.rate = rate;
     }
 
