@@ -42,15 +42,13 @@ public class Action<V> extends LogicAtom {
 
         try {
 
-            V parameter = (V) extract(globalParameter);
-
             if (field != null) {
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                field.set(parameter, value);
+                field.set(globalParameter, value);
             } else if (method != null) {
-                method.invoke(parameter, value);
+                method.invoke(globalParameter, value);
             }
             result = true;
         } catch (Exception e) {

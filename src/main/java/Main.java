@@ -9,12 +9,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, ParseException, NoSuchFieldException, NoSuchMethodException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
 
         ExcelParser parser = new ExcelParser();
         String dir = System.getProperty("user.dir");
         parser.readSheet(dir +  "\\Rule_01.xlsx");
         CreditRequest creditRequest = new CreditRequest("1.24.01", 350000);
+        creditRequest.setRate(1.0);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
         borrower.setBorrowerType(BorrowerType.GAZPROM);

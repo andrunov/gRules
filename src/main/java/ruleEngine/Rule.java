@@ -1,8 +1,5 @@
 package ruleEngine;
 
-import exception.ParseException;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +30,15 @@ public class Rule {
         this.action = action;
     }
 
-    public void perform(Object globalParameter) throws InvocationTargetException, IllegalAccessException, ParseException, NoSuchFieldException, NoSuchMethodException {
+    public void perform(Object ... parameters) {
         for ( Condition<?> condition : getConditions()) {
-            if (!condition.apply(globalParameter)){
+            if (!condition.selectAndApply(parameters)) {
                 return;
             }
         }
-        System.out.println(this);
-        action.apply(globalParameter);
+        if (action.selectAndApply(parameters)) {
+            System.out.println(this);
+        }
     }
 
 

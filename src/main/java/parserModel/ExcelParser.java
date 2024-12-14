@@ -185,6 +185,7 @@ public class ExcelParser {
                     rule.getConditions().add(condition);
                     condition.setField(conditionMap.get(cell.getColumnIndex()).getField());
                     condition.setParameterPath(conditionMap.get(cell.getColumnIndex()).getParameterPath());
+                    condition.setParameterType(conditionMap.get(cell.getColumnIndex()).getType());
                     CompareType compareType = CompareType.EQUALS;
                     if (value != null && value.getClass().equals(String.class)) {
                         String strValue = (String) value;
@@ -204,8 +205,8 @@ public class ExcelParser {
                     }
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
                     Action<V> action = new Action<>();
-
                     action.setField(actionMap.get(cell.getColumnIndex()).getField());
+                    action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());
                     rule.setAction(action);
                     if (value instanceof String) {
                         String strValue = (String) value;

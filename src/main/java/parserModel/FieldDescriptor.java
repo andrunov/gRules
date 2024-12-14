@@ -1,6 +1,7 @@
 package parserModel;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,8 @@ public class FieldDescriptor {
 
     private String dirName;
     private String className;
+
+    private Class type;
     private String fieldName;
     private Field field;
     private List<String> parameterPath = new ArrayList<>();
@@ -26,6 +29,7 @@ public class FieldDescriptor {
         String[] splitPath = fieldName.split("\\.");
         parameterPath.add(splitPath[0]);
         Field field =extractClass().getDeclaredField(splitPath[0]);
+        type = Class.forName(String.format("%s.%s", dirName, className));
         String[] remain = Arrays.copyOfRange(splitPath, 1, splitPath.length);
         if (remain.length == 0) {
             this.field = field;
@@ -83,5 +87,13 @@ public class FieldDescriptor {
 
     public void setField(Field field) {
         this.field = field;
+    }
+
+    public Class getType() {
+        return type;
+    }
+
+    public void setType(Class type) {
+        this.type = type;
     }
 }

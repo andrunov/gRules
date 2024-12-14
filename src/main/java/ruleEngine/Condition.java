@@ -56,7 +56,7 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            parameter = (V) extract(globalParameter);
+            this.parameter = (V) extract(globalParameter);
         } catch (Exception e) {
             return result;
         }
@@ -64,22 +64,22 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
         switch (compareType){
 
             case EQUALS:
-                result = parameter.equals(value);
+                result = this.parameter.equals(value);
                 return result;
             case NOT_EQUALS:
-                result = !parameter.equals(value);
+                result = !this.parameter.equals(value);
                 return result;
             case LESS_EXCL:
-                result = parameter.compareTo(value) < 0;
+                result = this.parameter.compareTo(value) < 0;
                 return result;
             case LESS_INCL:
-                result = parameter.compareTo(value) <= 0;
+                result = this.parameter.compareTo(value) <= 0;
                 return result;
             case MORE_EXCL:
-                result = parameter.compareTo(value) > 0;
+                result = this.parameter.compareTo(value) > 0;
                 return result;
             case MORE_INCL:
-                result = parameter.compareTo(value) >= 0;
+                result = this.parameter.compareTo(value) >= 0;
                 return result;
             case IN:
                 result = contains();
