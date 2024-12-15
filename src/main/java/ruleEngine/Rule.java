@@ -3,7 +3,7 @@ package ruleEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rule {
+public class Rule implements Performable{
 
     private final String title;
     private final List<Condition<?>> conditions;
@@ -27,6 +27,7 @@ public class Rule {
         return actions;
     }
 
+    @Override
     public void perform(Object ... parameters) {
         for ( Condition<?> condition : conditions) {
             if (!condition.selectAndApply(parameters)) {
@@ -44,15 +45,15 @@ public class Rule {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(title);
-        sb.append(": [");
+        sb.append(": [ ");
         for (Condition<?> condition : conditions ) {
             sb.append(condition.toString());
         }
-        sb.append("] ");
+        sb.append("] { ");
         for (Action<?> action : actions ) {
             sb.append(action.toString());
         }
-        sb.append("] ");
+        sb.append(" }");
 
         return sb.toString();
     }

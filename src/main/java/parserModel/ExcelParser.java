@@ -1,13 +1,11 @@
 package parserModel;
 
+import com.sun.glass.ui.Clipboard;
 import exception.ParseException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ruleEngine.Action;
-import ruleEngine.CompareType;
-import ruleEngine.Condition;
-import ruleEngine.Rule;
+import ruleEngine.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,25 +33,29 @@ public class ExcelParser {
     private List<Integer> actionColumns = new ArrayList<>();
     Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
     Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
-    private Map<Integer, Rule> ruleMap  = new HashMap<>();
+
     Sheet sheet;
     List<CellRange<?>> ranges;
-    public Map<Integer, Rule> getRuleMap() {
-        return ruleMap;
-    }
 
-    public void readSheet(String path) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
+
+
+    public List<Performable> readSheet(String path) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
         FileInputStream file = new FileInputStream(path);
         Workbook workbook = new XSSFWorkbook(file);
         sheet = workbook.getSheetAt(1);
         initRanges();
         readFirstColumn();
+        List<Performable> ruleSheet = new ArrayList<>();
+        RuleTable ruleTable = new RuleTable();
+        ruleSheet.add(ruleTable);
         readHeader();
         readClasses();
         readFields();
         readDirs();
         extractParameters();
-        readRules();
+        ruleTable.setPreConditions(new ArrayList<>());
+        ruleTable.setRules(readRules());
+        return ruleSheet;
     }
 
     private void initRanges() throws ClassNotFoundException {
@@ -169,10 +171,11 @@ public class ExcelParser {
         }
     }
 
-    private <V extends Comparable<V>> void readRules() throws NoSuchFieldException, ClassNotFoundException {
+    private <V extends Comparable<V>> List<Rule> readRules() throws NoSuchFieldException, ClassNotFoundException {
+        List<Rule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
             Rule rule = new Rule("Строка " + (ruleRow + 1)); //TODO разобраться откуда лишняя единица в нумерации
-            ruleMap.put(ruleRow, rule);
+            result.add(rule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {
                 V value = (V) Utils.getValue(cell);
@@ -219,6 +222,7 @@ public class ExcelParser {
                 }
             }
         }
+        return result;
     }
 
 

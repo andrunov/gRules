@@ -62,10 +62,9 @@ public class Action<V> extends LogicAtom {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
+        final StringBuilder sb = new StringBuilder();
         sb.append("Установлено ").append(field.getName());
         sb.append("=").append(value);
-        sb.append('}');
         return sb.toString();
     }
 }
