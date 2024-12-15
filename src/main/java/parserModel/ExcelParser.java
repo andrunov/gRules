@@ -206,6 +206,7 @@ public class ExcelParser {
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
                     Action<V> action = new Action<>();
                     action.setField(actionMap.get(cell.getColumnIndex()).getField());
+                    action.setParameterPath(actionMap.get(cell.getColumnIndex()).getParameterPath());
                     action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());
                     rule.setAction(action);
                     if (value instanceof String) {

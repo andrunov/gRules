@@ -48,20 +48,16 @@ public abstract class LogicAtom implements Applyable{
     }
 
     @Override
-    public Object extract(Object parameter) throws NoSuchFieldException, IllegalAccessException {
-        return extract(parameter, 0);
-    }
-
-    private Object extract(Object globalParameter, int index) throws NoSuchFieldException, IllegalAccessException {
-        Field field = globalParameter.getClass().getDeclaredField(parameterPath.get(index));
+    public Object extract(Object globalParameter, int startIndex, int depth) throws NoSuchFieldException, IllegalAccessException {
+        Field field = globalParameter.getClass().getDeclaredField(parameterPath.get(startIndex));
         if (!field.isAccessible()) {
             field.setAccessible(true);
         }
         Object obj = field.get(globalParameter);
-        if (parameterPath.size() == index + 1) {
+        if (parameterPath.size() == startIndex + 1 + depth) {
             return obj;
         } else {
-            return extract(obj, index + 1);
+            return extract(obj, startIndex + 1, depth);
         }
     }
 }

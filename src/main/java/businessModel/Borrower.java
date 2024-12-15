@@ -1,16 +1,16 @@
 package businessModel;
 
 public class Borrower {
-    private int age;
+    private double age;
     private boolean salaryClient;
 
     private BorrowerType borrowerType;
 
-    public int getAge() {
+    public double getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(double age) {
         this.age = age;
     }
 
