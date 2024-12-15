@@ -43,7 +43,7 @@ public class Action<V> extends LogicAtom {
 
         try {
 
-            V parameter = (V) extract(globalParameter, 0, 1);
+            V parameter = (V) extract(globalParameter, 1);
 
             if (field != null) {
                 if (!field.isAccessible()) {

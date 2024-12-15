@@ -7,11 +7,12 @@ public class Rule {
 
     private final String title;
     private final List<Condition<?>> conditions;
-    private Action<?> action;
+    private final List<Action<?>> actions;
 
     public Rule(String title) {
         this.title = title;
         this.conditions = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -22,23 +23,20 @@ public class Rule {
         return conditions;
     }
 
-    public Action<?> getAction() {
-        return action;
-    }
-
-    public void setAction(Action<?> action) {
-        this.action = action;
+    public List<Action<?>> getActions() {
+        return actions;
     }
 
     public void perform(Object ... parameters) {
-        for ( Condition<?> condition : getConditions()) {
+        for ( Condition<?> condition : conditions) {
             if (!condition.selectAndApply(parameters)) {
                 return;
             }
         }
-        if (action.selectAndApply(parameters)) {
-            System.out.println(this);
+        for ( Action<?> action :actions) {
+            action.selectAndApply(parameters);
         }
+        System.out.println(this);
     }
 
 
@@ -51,7 +49,10 @@ public class Rule {
             sb.append(condition.toString());
         }
         sb.append("] ");
-        sb.append(action);
+        for (Action<?> action : actions ) {
+            sb.append(action.toString());
+        }
+        sb.append("] ");
 
         return sb.toString();
     }

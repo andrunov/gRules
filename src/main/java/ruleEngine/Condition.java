@@ -56,7 +56,7 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            this.parameter = (V) extract(globalParameter, 0 ,0);
+            this.parameter = (V) extract(globalParameter, 0);
         } catch (Exception e) {
             return result;
         }
