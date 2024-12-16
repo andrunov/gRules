@@ -7,6 +7,18 @@ import java.util.List;
 
 public class FieldDescriptor {
 
+    public static FieldDescriptor from(String path) {
+        int slash = path.indexOf('/');
+        String dir = path.substring(0,slash );
+        int dot = path.indexOf('.');
+        String className = path.substring(slash + 1, dot);
+        String field = path.substring(dot + 1);
+        FieldDescriptor result = new FieldDescriptor(className);
+        result.setDirName(dir);
+        result.setFieldName(field);
+        return result;
+    }
+
     private String dirName;
     private String className;
 

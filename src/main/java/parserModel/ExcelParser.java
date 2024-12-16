@@ -103,20 +103,10 @@ public class ExcelParser {
             if (value != null && value.getClass().equals(String.class)) {
                 int spase = ((String) value).indexOf(' ');
                 String path = ((String) value).substring(0, spase);
-                int slash = path.indexOf('/');
-                String dir = path.substring(0,slash );
-                int dot = path.indexOf('.');
-                String className = path.substring(slash + 1, dot);
-                String field = path.substring(dot + 1);
                 String expression = ((String) value).substring(spase + 1);
-                FieldDescriptor fieldDescriptor = new FieldDescriptor(className);
-                fieldDescriptor.setDirName(dir);
-                fieldDescriptor.setFieldName(field);
+                FieldDescriptor fieldDescriptor = FieldDescriptor.from(path);
                 fieldDescriptor.extractFieldAndPar();
-                Condition<V> condition = new Condition<>();
-                condition.setField(fieldDescriptor.getField());
-                condition.setParameterPath(fieldDescriptor.getParameterPath());
-                condition.setParameterType(fieldDescriptor.getType());
+                Condition<V> condition = new Condition<>(fieldDescriptor);
                 CompareType compareType = extractFrom(expression);
                 condition.setCompareType(compareType);
                 expression = cutOffCompareType(expression, compareType);

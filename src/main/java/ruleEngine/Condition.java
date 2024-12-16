@@ -1,5 +1,7 @@
 package ruleEngine;
 
+import parserModel.FieldDescriptor;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 
@@ -10,7 +12,11 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
     private CompareType compareType;
     private V value;
 
-
+    public Condition (FieldDescriptor fieldDescriptor) {
+        field = fieldDescriptor.getField();
+        super.parameterPath = fieldDescriptor.getParameterPath();
+        super.parameterType = fieldDescriptor.getType();
+    }
 
     public Condition() {
     }
