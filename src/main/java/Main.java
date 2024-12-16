@@ -5,10 +5,8 @@ import businessModel.CreditRequest;
 import exception.ParseException;
 import parserModel.ExcelParser;
 import ruleEngine.Performable;
-import ruleEngine.Rule;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class Main {

@@ -1,6 +1,5 @@
 package parserModel;
 
-import com.sun.glass.ui.Clipboard;
 import exception.ParseException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -23,7 +22,7 @@ public class ExcelParser {
     private static final String CLASS = "#class";
     private static final String FIELD = "#field";
     private static final String VALUE = "#rule";
-
+    private List<Integer> preconditionRows = new ArrayList<>();
     private int headRow;
     private List<Integer> dirList = new ArrayList<>();
     private List<Integer> classList = new ArrayList<>();
@@ -31,8 +30,10 @@ public class ExcelParser {
     private List<Integer> ruleList = new ArrayList<>();
     private List<Integer> conditionColumns = new ArrayList<>();
     private List<Integer> actionColumns = new ArrayList<>();
-    Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
-    Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
+
+    private List<Applyable> preconditions = new ArrayList<>();
+    private Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
+    private Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
 
     Sheet sheet;
     List<CellRange<?>> ranges;
@@ -42,18 +43,18 @@ public class ExcelParser {
     public List<Performable> readSheet(String path) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
         FileInputStream file = new FileInputStream(path);
         Workbook workbook = new XSSFWorkbook(file);
-        sheet = workbook.getSheetAt(1);
+        sheet = workbook.getSheetAt(0);
         initRanges();
         readFirstColumn();
         List<Performable> ruleSheet = new ArrayList<>();
         RuleTable ruleTable = new RuleTable();
         ruleSheet.add(ruleTable);
+        ruleTable.setPreConditions(readPreconditions());
         readHeader();
         readClasses();
         readFields();
         readDirs();
         extractParameters();
-        ruleTable.setPreConditions(new ArrayList<>());
         ruleTable.setRules(readRules());
         return ruleSheet;
     }
@@ -73,7 +74,10 @@ public class ExcelParser {
                 value = lookUpАorRanges(cell);
             }
             if (value!=null && value.getClass().equals(String.class)) {
-                if (value.equals(HEAD)) {
+
+                if (value.equals(CONDITION)) {
+                    preconditionRows.add(row.getRowNum());
+                } else if (value.equals(HEAD)) {
                     headRow = row.getRowNum();
                 } else if (value.equals(DIR)) {
                     dirList.add(row.getRowNum());
@@ -86,6 +90,47 @@ public class ExcelParser {
                 }
             }
         }
+    }
+
+    private <V extends Comparable<V>> List<Condition<?>> readPreconditions() throws NoSuchFieldException, ClassNotFoundException {
+        List<Condition<?>> result = new ArrayList<>();
+        for (int rowNumber : preconditionRows) {
+            Cell cell = sheet.getRow(rowNumber).getCell(1);
+            Object value = Utils.getValue(cell);
+            if (value == null) {
+                value = lookUpАorRanges(cell);
+            }
+            if (value != null && value.getClass().equals(String.class)) {
+                int spase = ((String) value).indexOf(' ');
+                String path = ((String) value).substring(0, spase);
+                int slash = path.indexOf('/');
+                String dir = path.substring(0,slash );
+                int dot = path.indexOf('.');
+                String className = path.substring(slash + 1, dot);
+                String field = path.substring(dot + 1);
+                String expression = ((String) value).substring(spase + 1);
+                FieldDescriptor fieldDescriptor = new FieldDescriptor(className);
+                fieldDescriptor.setDirName(dir);
+                fieldDescriptor.setFieldName(field);
+                fieldDescriptor.extractFieldAndPar();
+                Condition<V> condition = new Condition<>();
+                condition.setField(fieldDescriptor.getField());
+                condition.setParameterPath(fieldDescriptor.getParameterPath());
+                condition.setParameterType(fieldDescriptor.getType());
+                CompareType compareType = extractFrom(expression);
+                condition.setCompareType(compareType);
+                expression = cutOffCompareType(expression, compareType);
+                Object enumValue = Utils.parseEnum(expression, condition.getField());
+                if (enumValue != null) {
+                    condition.setValue((V) enumValue);
+                } else {
+                    value = (V) Utils.castTo(expression);
+                    condition.setValue((V) value);
+                }
+                result.add(condition);
+            }
+        }
+        return result;
     }
 
     private void readHeader() {

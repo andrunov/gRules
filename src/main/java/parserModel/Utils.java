@@ -1,6 +1,5 @@
 package parserModel;
 
-import businessModel.BorrowerType;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.lang.reflect.Field;
