@@ -12,7 +12,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
 
-        CreditRequest creditRequest = new CreditRequest("1.24.01", 350000);
+        CreditRequest creditRequest = new CreditRequest("1.25.01", 350000);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
         borrower.setBorrowerType(BorrowerType.GAZPROM);
@@ -21,6 +21,7 @@ public class Main {
         System.out.println(creditRequest);
         CreditProgram creditProgram = new CreditProgram();
         System.out.println(creditProgram);
+        System.out.println();
         System.out.println(" ---  RULES REFORMATION STARTED ---");
 
         ExcelParser parser = new ExcelParser();
@@ -31,6 +32,7 @@ public class Main {
         }
 
         System.out.println(" ---  RULES REFORMATION FINISHER ---");
+        System.out.println();
         System.out.println(creditRequest);
         System.out.println(creditProgram);
 
