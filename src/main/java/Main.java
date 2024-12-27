@@ -4,6 +4,7 @@ import businessModel.CreditProgram;
 import businessModel.CreditRequest;
 import exception.ParseException;
 import parserModel.ExcelParser;
+import parserModel.SheetlParser;
 import ruleEngine.Performable;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
 
-        CreditRequest creditRequest = new CreditRequest("1.25.01", 350000);
+        CreditRequest creditRequest = new CreditRequest("1.26.01", 350000);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
         borrower.setBorrowerType(BorrowerType.GAZPROM);
@@ -26,7 +27,7 @@ public class Main {
 
         ExcelParser parser = new ExcelParser();
         String dir = System.getProperty("user.dir");
-        List<Performable> performables = parser.readSheet(dir +  "\\Rule_01.xlsx");
+        List<Performable> performables = parser.readFiles(dir +  "\\Rule_01.xlsx");
         for (Performable performable : performables) {
             performable.perform(creditRequest, creditProgram);
         }
