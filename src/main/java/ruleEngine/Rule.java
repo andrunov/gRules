@@ -1,5 +1,7 @@
 package ruleEngine;
 
+import org.apache.poi.ss.usermodel.Sheet;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +9,14 @@ import java.util.List;
 public class Rule implements Performable{
 
     private final File parentFile;
+    private final Sheet sheet;
     private final String title;
     private final List<Condition<?>> conditions;
     private final List<Action<?>> actions;
 
-    public Rule(File parentFile, String title) {
+    public Rule(File parentFile, Sheet sheet, String title) {
         this.parentFile = parentFile;
+        this.sheet = sheet;
         this.title = title;
         this.conditions = new ArrayList<>();
         this.actions = new ArrayList<>();
@@ -48,7 +52,9 @@ public class Rule implements Performable{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(parentFile.getPath());
-        sb.append("\n");
+        sb.append(" : ");
+        sb.append(sheet.getSheetName());
+        sb.append(" : ");
         sb.append(title);
         sb.append(": [ ");
         for (Condition<?> condition : conditions ) {

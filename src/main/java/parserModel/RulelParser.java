@@ -34,14 +34,16 @@ public class RulelParser {
     private Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
     private Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
 
-    private Sheet sheet;
-    private List<CellRange<?>> ranges;
+    private final File parentFile;
+    private final Sheet sheet;
+    private final List<CellRange<?>> ranges;
 
-    private int firstRow;
+    private final int firstRow;
     private int lastRow;
 
 
-    public RulelParser(Sheet sheet, List<CellRange<?>> ranges, int startRow) {
+    public RulelParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
+        this.parentFile = parentFile;
         this.sheet = sheet;
         this.ranges = ranges;
         this.firstRow = startRow;
@@ -51,7 +53,7 @@ public class RulelParser {
         return lastRow;
     }
 
-    public Performable readSheet(File parentFile) throws ClassNotFoundException, NoSuchFieldException {
+    public Performable readSheet() throws ClassNotFoundException, NoSuchFieldException {
         readFirstColumn();
         RuleTable result = new RuleTable();
         result.setPreConditions(readPreconditions());
@@ -60,7 +62,7 @@ public class RulelParser {
         readFields();
         readDirs();
         extractParameters();
-        result.setRules(readRules(parentFile));
+        result.setRules(readRules());
         return result;
     }
 
@@ -210,10 +212,10 @@ public class RulelParser {
         }
     }
 
-    private <V extends Comparable<V>> List<Rule> readRules(File parentFile) throws NoSuchFieldException, ClassNotFoundException {
+    private <V extends Comparable<V>> List<Rule> readRules() throws NoSuchFieldException, ClassNotFoundException {
         List<Rule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
-            Rule rule = new Rule(parentFile, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
+            Rule rule = new Rule(parentFile, sheet, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
             result.add(rule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {

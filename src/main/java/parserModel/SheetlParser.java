@@ -64,8 +64,8 @@ public class SheetlParser {
                     if (value.equals(RULE)) {
 
                         int startRow = row.getRowNum();
-                        RulelParser rulelParser = new RulelParser(sheet, ranges, startRow);
-                        result.add(rulelParser.readSheet(parentFile));
+                        RulelParser rulelParser = new RulelParser(parentFile, sheet, ranges, startRow);
+                        result.add(rulelParser.readSheet());
                         i = rulelParser.getLastRow();
 
                     }
