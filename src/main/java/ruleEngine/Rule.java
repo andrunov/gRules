@@ -1,15 +1,18 @@
 package ruleEngine;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Rule implements Performable{
 
+    private final File parentFile;
     private final String title;
     private final List<Condition<?>> conditions;
     private final List<Action<?>> actions;
 
-    public Rule(String title) {
+    public Rule(File parentFile, String title) {
+        this.parentFile = parentFile;
         this.title = title;
         this.conditions = new ArrayList<>();
         this.actions = new ArrayList<>();
@@ -44,6 +47,8 @@ public class Rule implements Performable{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(parentFile.getPath());
+        sb.append("\n");
         sb.append(title);
         sb.append(": [ ");
         for (Condition<?> condition : conditions ) {

@@ -1,6 +1,5 @@
 package parserModel;
 
-import exception.ParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import ruleEngine.Performable;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +15,17 @@ public class SheetlParser {
 
     private static final String RULE = "#rule";
 
-    private Sheet sheet;
+    private final File parentFile;
+    private final Sheet sheet;
 
     private List<CellRange<?>> ranges;
 
-    public SheetlParser(Sheet sheet) {
+    public SheetlParser(File parentFile, Sheet sheet) {
+        this.parentFile = parentFile;
         this.sheet = sheet;
     }
 
-    public List<Performable> readSheet() throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
+    public List<Performable> readSheet() throws ClassNotFoundException, NoSuchFieldException {
         initRanges();
         return readRules(sheet.getFirstRowNum());
     }
@@ -64,7 +65,7 @@ public class SheetlParser {
 
                         int startRow = row.getRowNum();
                         RulelParser rulelParser = new RulelParser(sheet, ranges, startRow);
-                        result.add(rulelParser.readSheet());
+                        result.add(rulelParser.readSheet(parentFile));
                         i = rulelParser.getLastRow();
 
                     }

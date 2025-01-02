@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import ruleEngine.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +51,7 @@ public class RulelParser {
         return lastRow;
     }
 
-    public Performable readSheet() throws ClassNotFoundException, NoSuchFieldException {
+    public Performable readSheet(File parentFile) throws ClassNotFoundException, NoSuchFieldException {
         readFirstColumn();
         RuleTable result = new RuleTable();
         result.setPreConditions(readPreconditions());
@@ -59,7 +60,7 @@ public class RulelParser {
         readFields();
         readDirs();
         extractParameters();
-        result.setRules(readRules());
+        result.setRules(readRules(parentFile));
         return result;
     }
 
@@ -209,10 +210,10 @@ public class RulelParser {
         }
     }
 
-    private <V extends Comparable<V>> List<Rule> readRules() throws NoSuchFieldException, ClassNotFoundException {
+    private <V extends Comparable<V>> List<Rule> readRules(File parentFile) throws NoSuchFieldException, ClassNotFoundException {
         List<Rule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
-            Rule rule = new Rule("Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
+            Rule rule = new Rule(parentFile, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
             result.add(rule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {

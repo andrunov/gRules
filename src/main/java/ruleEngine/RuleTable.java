@@ -1,11 +1,14 @@
 package ruleEngine;
 
+import java.io.File;
 import java.util.List;
 
 public class RuleTable implements Performable{
 
     private List<Condition<?>> preConditions;
     private List<Rule> rules;
+
+
 
     public List<Condition<?>> getPreConditions() {
         return preConditions;
