@@ -4,13 +4,12 @@ import businessModel.CreditProgram;
 import businessModel.CreditRequest;
 import exception.ParseException;
 import parserModel.ExcelParser;
+import ruleEngine.BaseRule;
 import ruleEngine.Performable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
@@ -39,7 +38,8 @@ public class Main {
         for (File file : baseDir.listFiles()) {
            // System.out.println(file);
             ExcelParser parser = new ExcelParser(file);
-            List<Performable> performables = parser.readFile();
+            List<BaseRule> performables = parser.readFile();
+            Collections.sort(performables);
             for (Performable performable : performables) {
                 performable.perform(creditRequest, creditProgram);
             }

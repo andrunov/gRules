@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import ruleEngine.BaseRule;
 import ruleEngine.Performable;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class SheetlParser {
         this.sheet = sheet;
     }
 
-    public List<Performable> readSheet() throws ClassNotFoundException, NoSuchFieldException {
+    public List<BaseRule> readSheet() throws ClassNotFoundException, NoSuchFieldException {
         initRanges();
         return readRules(sheet.getFirstRowNum());
     }
@@ -49,8 +50,8 @@ public class SheetlParser {
     }
 
 
-    private List<Performable> readRules(int startRowNum) throws NoSuchFieldException, ClassNotFoundException {
-        List<Performable> result = new ArrayList<>();
+    private List<BaseRule> readRules(int startRowNum) throws NoSuchFieldException, ClassNotFoundException {
+        List<BaseRule> result = new ArrayList<>();
         for (int i = startRowNum; i < sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) {

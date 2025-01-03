@@ -2,7 +2,7 @@ package ruleEngine;
 
 import java.util.List;
 
-public class RuleTable implements Performable{
+public class TableRule extends BaseRule{
 
     private List<Condition<?>> preConditions;
     private List<LineRule> lineRules;

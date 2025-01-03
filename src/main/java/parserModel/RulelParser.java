@@ -53,9 +53,9 @@ public class RulelParser {
         return lastRow;
     }
 
-    public Performable readSheet() throws ClassNotFoundException, NoSuchFieldException {
+    public BaseRule readSheet() throws ClassNotFoundException, NoSuchFieldException {
         readFirstColumn();
-        RuleTable result = new RuleTable();
+        TableRule result = new TableRule();
         result.setPreConditions(readPreconditions());
         readHeader();
         readClasses();

@@ -4,6 +4,7 @@ import exception.ParseException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ruleEngine.BaseRule;
 import ruleEngine.Performable;
 
 import java.io.File;
@@ -21,11 +22,11 @@ public class ExcelParser {
         this.file = file;
     }
 
-    public List<Performable> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException {
+    public List<BaseRule> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException {
         FileInputStream stream = new FileInputStream(file);
         Workbook workbook = new XSSFWorkbook(stream);
         Iterator<Sheet> iterator = workbook.sheetIterator();
-        List<Performable> performables = new ArrayList<>();
+        List<BaseRule> performables = new ArrayList<>();
         while (iterator.hasNext()) {
             Sheet sheet = iterator.next();
             SheetlParser parser = new SheetlParser(file, sheet);

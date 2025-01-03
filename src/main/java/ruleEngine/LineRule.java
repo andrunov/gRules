@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineRule implements Performable{
+public class LineRule extends BaseRule{
 
     private final File parentFile;
     private final Sheet sheet;
