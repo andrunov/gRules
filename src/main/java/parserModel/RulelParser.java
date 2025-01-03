@@ -211,11 +211,11 @@ public class RulelParser {
         }
     }
 
-    private <V extends Comparable<V>> List<Rule> readRules() throws NoSuchFieldException, ClassNotFoundException {
-        List<Rule> result = new ArrayList<>();
+    private <V extends Comparable<V>> List<LineRule> readRules() throws NoSuchFieldException, ClassNotFoundException {
+        List<LineRule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
-            Rule rule = new Rule(parentFile, sheet, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
-            result.add(rule);
+            LineRule lineRule = new LineRule(parentFile, sheet, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
+            result.add(lineRule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {
                 V value = (V) Utils.getValue(cell);
@@ -225,7 +225,7 @@ public class RulelParser {
 
                 if (conditionColumns.contains(cell.getColumnIndex())) {
                     Condition<V> condition = new Condition<>();
-                    rule.getConditions().add(condition);
+                    lineRule.getConditions().add(condition);
                     condition.setField(conditionMap.get(cell.getColumnIndex()).getField());
                     condition.setParameterPath(conditionMap.get(cell.getColumnIndex()).getParameterPath());
                     condition.setParameterType(conditionMap.get(cell.getColumnIndex()).getType());
@@ -247,7 +247,7 @@ public class RulelParser {
                     }
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
                     Action<V> action = new Action<>();
-                    rule.getActions().add(action);
+                    lineRule.getActions().add(action);
                     action.setField(actionMap.get(cell.getColumnIndex()).getField());
                     action.setParameterPath(actionMap.get(cell.getColumnIndex()).getParameterPath());
                     action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());

@@ -1,12 +1,11 @@
 package ruleEngine;
 
-import java.io.File;
 import java.util.List;
 
 public class RuleTable implements Performable{
 
     private List<Condition<?>> preConditions;
-    private List<Rule> rules;
+    private List<LineRule> lineRules;
 
 
 
@@ -18,12 +17,12 @@ public class RuleTable implements Performable{
         this.preConditions = preConditions;
     }
 
-    public List<Rule> getRules() {
-        return rules;
+    public List<LineRule> getRules() {
+        return lineRules;
     }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
+    public void setRules(List<LineRule> lineRules) {
+        this.lineRules = lineRules;
     }
 
     @Override
@@ -33,8 +32,8 @@ public class RuleTable implements Performable{
                 return;
             }
         }
-        for ( Rule rule : rules) {
-            rule.perform(parameters);
+        for ( LineRule lineRule : lineRules) {
+            lineRule.perform(parameters);
         }
     }
 }

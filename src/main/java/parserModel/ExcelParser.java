@@ -21,7 +21,7 @@ public class ExcelParser {
         this.file = file;
     }
 
-    public List<Performable> readFile() throws IOException, ParseException, NoSuchFieldException, ClassNotFoundException, NoSuchMethodException {
+    public List<Performable> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException {
         FileInputStream stream = new FileInputStream(file);
         Workbook workbook = new XSSFWorkbook(stream);
         Iterator<Sheet> iterator = workbook.sheetIterator();

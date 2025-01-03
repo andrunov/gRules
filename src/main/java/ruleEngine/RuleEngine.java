@@ -4,7 +4,6 @@ import businessModel.Borrower;
 import businessModel.BorrowerType;
 import businessModel.CreditRequest;
 import exception.ParseException;
-import parserModel.Utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
