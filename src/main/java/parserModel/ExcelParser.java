@@ -1,11 +1,9 @@
 package parserModel;
 
-import exception.ParseException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ruleEngine.BaseRule;
-import ruleEngine.Performable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +27,7 @@ public class ExcelParser {
         List<BaseRule> performables = new ArrayList<>();
         while (iterator.hasNext()) {
             Sheet sheet = iterator.next();
-            SheetlParser parser = new SheetlParser(file, sheet);
+            SheetParser parser = new SheetParser(file, sheet);
             performables.addAll(parser.readSheet());
         }
         return performables;

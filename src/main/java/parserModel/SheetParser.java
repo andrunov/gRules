@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SheetlParser {
+public class SheetParser {
 
     private static final String TABLE_RULE = "#tablerule";
 
@@ -20,7 +20,7 @@ public class SheetlParser {
 
     private List<CellRange<?>> ranges;
 
-    public SheetlParser(File parentFile, Sheet sheet) {
+    public SheetParser(File parentFile, Sheet sheet) {
         this.parentFile = parentFile;
         this.sheet = sheet;
     }
