@@ -72,6 +72,9 @@ public class Utils {
     public static Object castTo(String value) {
         Object result = castToBoolean(value);
         if (result.getClass().equals(String.class)) {
+            result = castToDouble(value);
+        }
+        if (result.getClass().equals(String.class)) {
             result = castToDate(value);
         }
         return result;
@@ -98,12 +101,16 @@ public class Utils {
         if (value.equalsIgnoreCase("true")
                 || value.equalsIgnoreCase("false")) {
             result = Boolean.parseBoolean(value);
-        } else {
-            try {
-                result = Double.parseDouble(value);
-            } catch (Exception e) {
+        }
+        return result;
+    }
 
-            }
+    private static Object castToDouble(String value) {
+        Object result = value;
+        try {
+             result = Double.parseDouble(value);
+        } catch (Exception e) {
+
         }
         return result;
     }
