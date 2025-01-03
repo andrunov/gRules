@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RulelParser {
+public class TableRulelParser {
     private static final String CONDITION= "#condition";
     private static final String ACTION = "#action";
     private static final String HEAD = "#head";
@@ -42,7 +42,7 @@ public class RulelParser {
     private int lastRow;
 
 
-    public RulelParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
+    public TableRulelParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
         this.parentFile = parentFile;
         this.sheet = sheet;
         this.ranges = ranges;

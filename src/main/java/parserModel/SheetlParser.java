@@ -6,7 +6,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import ruleEngine.BaseRule;
-import ruleEngine.Performable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class SheetlParser {
 
-    private static final String RULE = "#rule";
+    private static final String TABLE_RULE = "#tablerule";
 
     private final File parentFile;
     private final Sheet sheet;
@@ -62,12 +61,12 @@ public class SheetlParser {
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 
-                    if (value.equals(RULE)) {
+                    if (value.equals(TABLE_RULE)) {
 
                         int startRow = row.getRowNum();
-                        RulelParser rulelParser = new RulelParser(parentFile, sheet, ranges, startRow);
-                        result.add(rulelParser.readSheet());
-                        i = rulelParser.getLastRow();
+                        TableRulelParser tableRulelParser = new TableRulelParser(parentFile, sheet, ranges, startRow);
+                        result.add(tableRulelParser.readSheet());
+                        i = tableRulelParser.getLastRow();
 
                     }
                 }

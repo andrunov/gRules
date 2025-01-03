@@ -36,14 +36,12 @@ public class Main {
         String basePath = Main.class.getClassLoader().getResource("Rules").getPath();
         File baseDir = new File(basePath);
         for (File file : baseDir.listFiles()) {
-           // System.out.println(file);
             ExcelParser parser = new ExcelParser(file);
             List<BaseRule> performables = parser.readFile();
             Collections.sort(performables);
             for (Performable performable : performables) {
                 performable.perform(creditRequest, creditProgram);
             }
-
         }
 
         System.out.println(" ---  RULES REFORMATION FINISHER ---");
