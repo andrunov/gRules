@@ -102,26 +102,25 @@ public class RulelParser {
         List<Condition<?>> result = new ArrayList<>();
         for (int rowNumber : preconditionRows) {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
-            Object value = Utils.getValue(cell);
-            if (value == null) {
-                value = lookUpАorRanges(cell);
+            Object expression = Utils.getValue(cell);
+            if (expression == null) {
+                expression = lookUpАorRanges(cell);
             }
-            if (value != null && value.getClass().equals(String.class)) {
-                int spase = ((String) value).indexOf(' ');
-                String path = ((String) value).substring(0, spase);
-                String expression = ((String) value).substring(spase + 1);
+            if (expression != null && expression.getClass().equals(String.class)) {
+                int spase = ((String) expression).indexOf(' ');
+                String path = ((String) expression).substring(0, spase);
+                String value = ((String) expression).substring(spase + 1);
                 FieldDescriptor fieldDescriptor = FieldDescriptor.from(path);
                 fieldDescriptor.extractFieldAndPar();
                 Condition<V> condition = new Condition<>(fieldDescriptor);
-                CompareType compareType = extractFrom(expression);
+                CompareType compareType = extractFrom(value);
                 condition.setCompareType(compareType);
-                expression = cutOffCompareType(expression, compareType);
-                Object enumValue = Utils.parseEnum(expression, condition.getField());
+                value = cutOffCompareType(value, compareType);
+                Object enumValue = Utils.parseEnum(value, condition.getField());
                 if (enumValue != null) {
                     condition.setValue((V) enumValue);
                 } else {
-                    value = (V) Utils.castTo(expression);
-                    condition.setValue((V) value);
+                    condition.setValue((V) Utils.castTo(value));
                 }
                 result.add(condition);
             }
@@ -240,8 +239,7 @@ public class RulelParser {
                         if (enumValue != null) {
                             condition.setValue((V) enumValue);
                         } else {
-                            value = (V) Utils.castTo(strValue);
-                            condition.setValue(value);
+                            condition.setValue((V) Utils.castTo(strValue));
                         }
                     } else {
                         condition.setCompareType(compareType);
@@ -255,8 +253,7 @@ public class RulelParser {
                     action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());
                     if (value instanceof String) {
                         String strValue = (String) value;
-                        value = (V) Utils.castTo(strValue);
-                        action.setValue(value);
+                        action.setValue((V) Utils.castTo(strValue));
                     } else {
                         action.setValue(value);
                     }

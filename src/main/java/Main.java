@@ -8,6 +8,8 @@ import ruleEngine.Performable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class Main {
@@ -16,7 +18,9 @@ public class Main {
 
 
 
-        CreditRequest creditRequest = new CreditRequest("1.26.01", 350000);
+        CreditRequest creditRequest = new CreditRequest("1.24.01", 350000);
+        Calendar calendar = new GregorianCalendar(2024,Calendar.JANUARY, 1);
+        creditRequest.setApplicDate(calendar);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
         borrower.setBorrowerType(BorrowerType.GAZPROM);

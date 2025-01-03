@@ -1,18 +1,26 @@
 package businessModel;
 
+import java.util.Calendar;
+
 public class CreditRequest {
 
+    private Calendar applicDate;
     private String programCode;
-
     private double creditQty;
-
     private double rate;
-
     private Borrower borrower;
 
     public CreditRequest(String programCode, int creditQty) {
         this.programCode = programCode;
         this.creditQty = creditQty;
+    }
+
+    public Calendar getApplicDate() {
+        return applicDate;
+    }
+
+    public void setApplicDate(Calendar applicDate) {
+        this.applicDate = applicDate;
     }
 
     public Borrower getBorrower() {
