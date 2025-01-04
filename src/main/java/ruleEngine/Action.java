@@ -1,5 +1,7 @@
 package ruleEngine;
 
+import parserModel.Utils;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -63,8 +65,9 @@ public class Action<V> extends LogicAtom {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Установлено ").append(field.getName());
-        sb.append("=").append(value);
+        sb.append(Utils.getSimpleName(((Class<?>) parameterType).getName())).append(".");
+        sb.append(field.getName());
+        sb.append("=").append(value).append("; ");
         return sb.toString();
     }
 }

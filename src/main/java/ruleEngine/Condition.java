@@ -1,6 +1,7 @@
 package ruleEngine;
 
 import parserModel.FieldDescriptor;
+import parserModel.Utils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -118,6 +119,7 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(Utils.getSimpleName(((Class<?>) parameterType).getName())).append(".");
         int counter = 0;
         for (String par : parameterPath) {
             counter ++;

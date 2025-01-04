@@ -144,6 +144,11 @@ public class Utils {
         return null;
     }
 
+    public static String getSimpleName(String path) {
+        int lastDot = path.lastIndexOf('.');
+        return path.substring(lastDot + 1);
+    }
+
 
 
 

@@ -57,11 +57,11 @@ public class LineRule extends BaseRule{
         sb.append(sheet.getSheetName());
         sb.append(" : ");
         sb.append(title);
-        sb.append(": [ ");
+        sb.append(": [ Условия: ");
         for (Condition<?> condition : conditions ) {
             sb.append(condition.toString());
         }
-        sb.append("] { ");
+        sb.append("] { Установлено: ");
         for (Action<?> action : actions ) {
             sb.append(action.toString());
         }
