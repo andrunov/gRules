@@ -65,12 +65,12 @@ public class LineRule extends BaseRule{
         sb.append("\n");
         sb.append(" Условия: \n");
         for (Condition<?> condition : conditions ) {
-            sb.append("  ").append(condition.toString());
+            sb.append("   ").append(condition.toString());
             sb.append("\n");
         }
         sb.append(" Действия: \n");
         for (Action<?> action : actions ) {
-            sb.append("  ").append(action.toString());
+            sb.append("   ").append(action.toString());
             sb.append("\n");
         }
         return sb.toString();

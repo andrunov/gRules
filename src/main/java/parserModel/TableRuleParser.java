@@ -72,7 +72,7 @@ public class TableRuleParser {
 
     private int getPriority() {
         Double result = null;
-        if (priorityRow > headRow) {
+        if (priorityRow > firstRow) {
             Row row = sheet.getRow(priorityRow);
             Object value = Utils.getValue(row.getCell(1));
             result = (Double) value;

@@ -14,10 +14,7 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException {
 
-
-
-
-        CreditRequest creditRequest = new CreditRequest("1.24.01", 350000);
+        CreditRequest creditRequest = new CreditRequest("1.24.01", 1000000);
         Calendar calendar = new GregorianCalendar(2024,Calendar.JULY, 1);
         creditRequest.setApplicDate(calendar);
         Borrower borrower = new Borrower();
@@ -29,22 +26,23 @@ public class Main {
         CreditProgram creditProgram = new CreditProgram();
         System.out.println(creditProgram);
 
-        System.out.println();
-        System.out.println("RULES REFORMATION STARTED ---");
-
-
         String basePath = Main.class.getClassLoader().getResource("Rules").getPath();
         File baseDir = new File(basePath);
+        List<BaseRule> performables = new ArrayList<>();
         for (File file : baseDir.listFiles()) {
             ExcelParser parser = new ExcelParser(file);
-            List<BaseRule> performables = parser.readFile();
-            Collections.sort(performables);
-            for (Performable performable : performables) {
-                performable.perform(creditRequest, creditProgram);
-            }
+            performables.addAll(parser.readFile());
         }
 
-        System.out.println("RULES REFORMATION FINISHER ---");
+        System.out.println();
+        System.out.println("RULES STARTED");
+        System.out.println("------------------");
+        Collections.sort(performables);
+        for (Performable performable : performables) {
+            performable.perform(creditRequest, creditProgram);
+        }
+        System.out.println("------------------");
+        System.out.println("RULES FINISHED");
         System.out.println();
         System.out.println(creditRequest);
         System.out.println(creditProgram);
