@@ -7,6 +7,9 @@ public class TableRule extends BaseRule{
     private List<Condition<?>> preConditions;
     private List<LineRule> lineRules;
 
+    public TableRule(int priority) {
+        super(priority);
+    }
 
 
     public List<Condition<?>> getPreConditions() {

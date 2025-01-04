@@ -64,9 +64,9 @@ public class SheetParser {
                     if (value.equals(TABLE_RULE)) {
 
                         int startRow = row.getRowNum();
-                        TableRulelParser tableRulelParser = new TableRulelParser(parentFile, sheet, ranges, startRow);
-                        result.add(tableRulelParser.readSheet());
-                        i = tableRulelParser.getLastRow();
+                        TableRuleParser tableRuleParser = new TableRuleParser(parentFile, sheet, ranges, startRow);
+                        result.add(tableRuleParser.readSheet());
+                        i = tableRuleParser.getLastRow();
 
                     }
                 }

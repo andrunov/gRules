@@ -12,17 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TableRulelParser {
+public class TableRuleParser {
+    private static final String HEAD = "#head";
+    private static final String PRIORITY = "#priority";
     private static final String CONDITION= "#condition";
     private static final String ACTION = "#action";
-    private static final String HEAD = "#head";
     private static final String DIR = "#dir";
     private static final String CLASS = "#class";
     private static final String FIELD = "#field";
     private static final String RULE_ROW = "#row";
     private static final String END = "#end";
-    private List<Integer> preconditionRows = new ArrayList<>();
     private int headRow;
+    private int priorityRow;
+    private List<Integer> preconditionRows = new ArrayList<>();
     private List<Integer> dirList = new ArrayList<>();
     private List<Integer> classList = new ArrayList<>();
     private List<Integer> fieldList = new ArrayList<>();
@@ -42,7 +44,7 @@ public class TableRulelParser {
     private int lastRow;
 
 
-    public TableRulelParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
+    public TableRuleParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
         this.parentFile = parentFile;
         this.sheet = sheet;
         this.ranges = ranges;
@@ -55,7 +57,7 @@ public class TableRulelParser {
 
     public BaseRule readSheet() throws ClassNotFoundException, NoSuchFieldException {
         readFirstColumn();
-        TableRule result = new TableRule();
+        TableRule result = new TableRule(priorityRow);
         result.setPreConditions(readPreconditions());
         readHeader();
         readClasses();
@@ -77,11 +79,13 @@ public class TableRulelParser {
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 
-                    if (value.equals(CONDITION)) {
-                        preconditionRows.add(row.getRowNum());
-                    } else if (value.equals(HEAD)) {
+                    if (value.equals(HEAD)) {
                         headRow = row.getRowNum();
-                    } else if (value.equals(DIR)) {
+                    } else if (value.equals(PRIORITY)) {
+                        priorityRow = row.getRowNum();
+                    } else if (value.equals(CONDITION)) {
+                        preconditionRows.add(row.getRowNum());
+                    }  else if (value.equals(DIR)) {
                         dirList.add(row.getRowNum());
                     } else if (value.equals(CLASS)) {
                         classList.add(row.getRowNum());
@@ -214,7 +218,7 @@ public class TableRulelParser {
     private <V extends Comparable<V>> List<LineRule> readRules() throws NoSuchFieldException, ClassNotFoundException {
         List<LineRule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
-            LineRule lineRule = new LineRule(parentFile, sheet, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
+            LineRule lineRule = new LineRule(0, parentFile, sheet, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
             result.add(lineRule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {

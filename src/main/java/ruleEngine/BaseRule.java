@@ -1,7 +1,11 @@
 package ruleEngine;
 
 public abstract class BaseRule implements Performable, Comparable<BaseRule> {
-    private int priority;
+    private final int priority;
+
+    public BaseRule(int priority) {
+        this.priority = priority;
+    }
 
     @Override
     public int compareTo(BaseRule o) {

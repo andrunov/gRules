@@ -14,7 +14,8 @@ public class LineRule extends BaseRule{
     private final List<Condition<?>> conditions;
     private final List<Action<?>> actions;
 
-    public LineRule(File parentFile, Sheet sheet, String title) {
+    public LineRule(int priority, File parentFile, Sheet sheet, String title) {
+        super(priority);
         this.parentFile = parentFile;
         this.sheet = sheet;
         this.title = title;
