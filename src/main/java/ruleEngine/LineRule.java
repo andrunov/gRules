@@ -10,14 +10,16 @@ public class LineRule extends BaseRule{
 
     private final File parentFile;
     private final Sheet sheet;
+    private final String name;
     private final String title;
     private final List<Condition<?>> conditions;
     private final List<Action<?>> actions;
 
-    public LineRule(int priority, File parentFile, Sheet sheet, String title) {
+    public LineRule(int priority, File parentFile, Sheet sheet, String name, String title) {
         super(priority);
         this.parentFile = parentFile;
         this.sheet = sheet;
+        this.name = name;
         this.title = title;
         this.conditions = new ArrayList<>();
         this.actions = new ArrayList<>();
@@ -52,21 +54,25 @@ public class LineRule extends BaseRule{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("Правило : ");
         sb.append(parentFile.getName());
         sb.append(" : ");
         sb.append(sheet.getSheetName());
         sb.append(" : ");
+        sb.append(name);
+        sb.append("\n");
         sb.append(title);
-        sb.append(": [ Условия: ");
+        sb.append("\n");
+        sb.append(" Условия: \n");
         for (Condition<?> condition : conditions ) {
-            sb.append(condition.toString());
+            sb.append("  ").append(condition.toString());
+            sb.append("\n");
         }
-        sb.append("] { Установлено: ");
+        sb.append(" Действия: \n");
         for (Action<?> action : actions ) {
-            sb.append(action.toString());
+            sb.append("  ").append(action.toString());
+            sb.append("\n");
         }
-        sb.append(" }");
-
         return sb.toString();
     }
 }

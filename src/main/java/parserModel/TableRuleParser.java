@@ -36,6 +36,7 @@ public class TableRuleParser {
     private Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
     private Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
 
+    private String ruleName;
     private final File parentFile;
     private final Sheet sheet;
     private final List<CellRange<?>> ranges;
@@ -55,9 +56,10 @@ public class TableRuleParser {
         return lastRow;
     }
 
-    public BaseRule readSheet() throws ClassNotFoundException, NoSuchFieldException {
+    public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException {
         readFirstColumn();
-        TableRule result = new TableRule(priorityRow);
+        ruleName = getRuleName();
+        TableRule result = new TableRule(getPriority());
         result.setPreConditions(readPreconditions());
         readHeader();
         readClasses();
@@ -66,6 +68,26 @@ public class TableRuleParser {
         extractParameters();
         result.setRules(readRules());
         return result;
+    }
+
+    private int getPriority() {
+        Double result = null;
+        if (priorityRow > headRow) {
+            Row row = sheet.getRow(priorityRow);
+            Object value = Utils.getValue(row.getCell(1));
+            result = (Double) value;
+            if (result == null) {
+                result = 0.0;
+            }
+        } else {
+            result = 0.0;
+        }
+        return result.intValue();
+    }
+
+    private String getRuleName() {
+        Row row = sheet.getRow(firstRow);
+        return (String) Utils.getValue(row.getCell(1));
     }
 
     private void readFirstColumn() {
@@ -218,7 +240,7 @@ public class TableRuleParser {
     private <V extends Comparable<V>> List<LineRule> readRules() throws NoSuchFieldException, ClassNotFoundException {
         List<LineRule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
-            LineRule lineRule = new LineRule(0, parentFile, sheet, "Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
+            LineRule lineRule = new LineRule(0, parentFile, sheet, ruleName,"Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
             result.add(lineRule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {

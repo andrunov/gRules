@@ -27,7 +27,7 @@ public class SheetParser {
 
     public List<BaseRule> readSheet() throws ClassNotFoundException, NoSuchFieldException {
         initRanges();
-        return readRules(sheet.getFirstRowNum());
+        return readSheet(sheet.getFirstRowNum());
     }
 
     private void initRanges() throws ClassNotFoundException {
@@ -49,7 +49,7 @@ public class SheetParser {
     }
 
 
-    private List<BaseRule> readRules(int startRowNum) throws NoSuchFieldException, ClassNotFoundException {
+    private List<BaseRule> readSheet(int startRowNum) throws NoSuchFieldException, ClassNotFoundException {
         List<BaseRule> result = new ArrayList<>();
         for (int i = startRowNum; i < sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
@@ -65,7 +65,7 @@ public class SheetParser {
 
                         int startRow = row.getRowNum();
                         TableRuleParser tableRuleParser = new TableRuleParser(parentFile, sheet, ranges, startRow);
-                        result.add(tableRuleParser.readSheet());
+                        result.add(tableRuleParser.readRule());
                         i = tableRuleParser.getLastRow();
 
                     }

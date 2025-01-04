@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException, NoSuchFieldException, NoSuchMethodException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException {
 
 
 
 
         CreditRequest creditRequest = new CreditRequest("1.24.01", 350000);
-        Calendar calendar = new GregorianCalendar(2024,Calendar.JANUARY, 1);
+        Calendar calendar = new GregorianCalendar(2024,Calendar.JULY, 1);
         creditRequest.setApplicDate(calendar);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
@@ -30,7 +30,7 @@ public class Main {
         System.out.println(creditProgram);
 
         System.out.println();
-        System.out.println(" ---  RULES REFORMATION STARTED ---");
+        System.out.println("RULES REFORMATION STARTED ---");
 
 
         String basePath = Main.class.getClassLoader().getResource("Rules").getPath();
@@ -44,7 +44,7 @@ public class Main {
             }
         }
 
-        System.out.println(" ---  RULES REFORMATION FINISHER ---");
+        System.out.println("RULES REFORMATION FINISHER ---");
         System.out.println();
         System.out.println(creditRequest);
         System.out.println(creditProgram);
