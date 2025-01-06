@@ -280,6 +280,10 @@ public class TableRuleParser {
                     if (value instanceof String) {
                         String strValue = (String) value;
                         action.setValue((V) Utils.castTo(strValue));
+                    } else if (value instanceof Double) {
+                        Double dounleValue = (Double) value;
+                        dounleValue = Math.ceil(dounleValue * 100) / 100;
+                        action.setValue((V) dounleValue);
                     } else {
                         action.setValue(value);
                     }
