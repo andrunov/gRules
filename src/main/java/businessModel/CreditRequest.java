@@ -18,7 +18,7 @@ public class CreditRequest {
     }
 
     public boolean isComplete() {
-        return this.programCode != null && !this.programCode.isEmpty() && this.creditQty != 0;
+        return this.programCode != null && !this.programCode.isEmpty() && this.creditQty != 0 && borrower.getBorrowerType() != null;
     }
 
     public CreditRequest() {

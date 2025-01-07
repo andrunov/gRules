@@ -34,7 +34,7 @@ public class Main {
         creditRequest.setApplicDate(calendar);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
-        borrower.setBorrowerType(BorrowerType.GAZPROM);
+       // borrower.setBorrowerType(BorrowerType.GAZPROM);
         creditRequest.setBorrower(borrower);
         return creditRequest;
     }
@@ -67,19 +67,49 @@ public class Main {
     private void complete(CreditRequest creditRequest) {
         Scanner in = new Scanner(System.in);
         if (creditRequest.getProgramCode() == null || creditRequest.getProgramCode().isEmpty()) {
-            System.out.print("Введите номер программы: ");
+            System.out.print("Введите номер программы: \n");
             String prog = in.next();
             creditRequest.setProgramCode(prog);
         } else if (creditRequest.getCreditQty() == 0) {
-            System.out.print("Введите сумму кредита: ");
+            System.out.print("Введите сумму кредита: \n");
             int qty = in.nextInt();
             creditRequest.setCreditQty(qty);
+        } else if (creditRequest.getBorrower().getBorrowerType() == null) {
+            System.out.print("Введите тип заемщика: \n1 - GAZPROM\n2 - GAZPROM_GROUP\n3 - BANK\n4 - OTHER\n5 - OUTER\n");
+            int number = in.nextInt();
+            setBorrowerType(creditRequest.getBorrower(), number);
+        }
+    }
+
+    private void setBorrowerType(Borrower borrower, int number) {
+        switch (number) {
+            case 1 : {
+                borrower.setBorrowerType(BorrowerType.GAZPROM);
+                return;
+            }
+            case 2 : {
+                borrower.setBorrowerType(BorrowerType.GAZPROM_GROUP);
+                return;
+            }
+            case 3 : {
+                borrower.setBorrowerType(BorrowerType.BANK);
+                return;
+            }
+            case 4 : {
+                borrower.setBorrowerType(BorrowerType.OTHER);
+                return;
+            }
+            case 5 : {
+                borrower.setBorrowerType(BorrowerType.OUTER);
+                return;
+            }
         }
     }
 
     private void clean(CreditRequest creditRequest) {
         creditRequest.setProgramCode(null);
         creditRequest.setCreditQty(0);
+        creditRequest.getBorrower().setBorrowerType(null);
     }
 
 }
