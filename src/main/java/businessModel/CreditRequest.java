@@ -1,18 +1,29 @@
 package businessModel;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class CreditRequest {
 
     private Calendar applicDate;
     private String programCode;
     private double creditQty;
+    private double duration;
     private double rate;
     private Borrower borrower;
 
     public CreditRequest(String programCode, int creditQty) {
         this.programCode = programCode;
         this.creditQty = creditQty;
+    }
+
+    public boolean isComplete() {
+        return this.programCode != null && !this.programCode.isEmpty() && this.creditQty != 0;
+    }
+
+    public CreditRequest() {
     }
 
     public Calendar getApplicDate() {
@@ -55,11 +66,23 @@ public class CreditRequest {
         this.rate = rate;
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
+
     @Override
     public String toString() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = format.format(applicDate.getTime());
         final StringBuilder sb = new StringBuilder("CreditRequest{");
-        sb.append("programCode='").append(programCode).append('\'');
+        sb.append("applicDate=").append(strDate);
+        sb.append(", programCode='").append(programCode).append('\'');
         sb.append(", creditQty=").append(creditQty);
+        sb.append(", duration=").append(duration);
         sb.append(", rate=").append(rate);
         sb.append(", borrower=").append(borrower);
         sb.append('}');
