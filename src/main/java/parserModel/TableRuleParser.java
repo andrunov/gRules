@@ -97,7 +97,7 @@ public class TableRuleParser {
                 Cell cell = row.getCell(0);
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = lookUpАorRanges(cell);
+                    value = Utils.findInRanges(cell, ranges);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 
@@ -130,7 +130,7 @@ public class TableRuleParser {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
             Object expression = Utils.getValue(cell);
             if (expression == null) {
-                expression = lookUpАorRanges(cell);
+                expression = Utils.findInRanges(cell, ranges);
             }
             if (expression != null && expression.getClass().equals(String.class)) {
                 int spase = ((String) expression).indexOf(' ');
@@ -158,7 +158,7 @@ public class TableRuleParser {
         for (Cell cell : sheet.getRow(headRow)) {
             Object value = Utils.getValue(cell);
             if (value== null) {
-                value = lookUpАorRanges(cell);
+                value = Utils.findInRanges(cell, ranges);
             }
             if (value!=null && value.getClass().equals(String.class)) {
                 if (value.equals(CONDITION)) {
@@ -175,7 +175,7 @@ public class TableRuleParser {
             for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = lookUpАorRanges(cell);
+                    value = Utils.findInRanges(cell, ranges);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
@@ -203,7 +203,7 @@ public class TableRuleParser {
             for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = lookUpАorRanges(cell);
+                    value = Utils.findInRanges(cell, ranges);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
@@ -222,7 +222,7 @@ public class TableRuleParser {
             for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = lookUpАorRanges(cell);
+                    value = Utils.findInRanges(cell, ranges);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
@@ -246,7 +246,7 @@ public class TableRuleParser {
             for (Cell cell : sheet.getRow(ruleRow)) {
                 V value = (V) Utils.getValue(cell);
                 if (value == null) {
-                    value = (V) lookUpАorRanges(cell);
+                    value = (V) Utils.findInRanges(cell, ranges);
                 }
 
                 if (conditionColumns.contains(cell.getColumnIndex())) {
@@ -291,20 +291,6 @@ public class TableRuleParser {
             }
         }
         return result;
-    }
-
-
-
-
-    public Object lookUpАorRanges(Cell cell) {
-        if (cell != null && cell.getCellType() == CellType.BLANK) {
-            for (CellRange<?> range : ranges) {
-                if (range.contains(cell)) {
-                    return range.getValue();
-                }
-            }
-        }
-        return null;
     }
 
 

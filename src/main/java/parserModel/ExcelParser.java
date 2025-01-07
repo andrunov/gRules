@@ -22,6 +22,7 @@ public class ExcelParser {
 
     public List<BaseRule> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException {
         FileInputStream stream = new FileInputStream(file);
+        System.out.println("Read file: " + file);
         Workbook workbook = new XSSFWorkbook(stream);
         Iterator<Sheet> iterator = workbook.sheetIterator();
         List<BaseRule> performables = new ArrayList<>();
@@ -30,6 +31,8 @@ public class ExcelParser {
             SheetParser parser = new SheetParser(file, sheet);
             performables.addAll(parser.readSheet());
         }
+        System.out.println("Read file finished");
+        System.out.println();
         return performables;
     }
 }

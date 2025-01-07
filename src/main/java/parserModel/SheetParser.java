@@ -27,6 +27,7 @@ public class SheetParser {
 
     public List<BaseRule> readSheet() throws ClassNotFoundException, NoSuchFieldException {
         initRanges();
+        System.out.println("Read sheet: " + sheet.getSheetName());
         return readSheet(sheet.getFirstRowNum());
     }
 
@@ -35,17 +36,6 @@ public class SheetParser {
         for (CellRangeAddress range : sheet.getMergedRegions()) {
             ranges.add(CellRange.of(range, sheet));
         }
-    }
-
-    public Object lookUpАorRanges(Cell cell) {
-        if (cell != null && cell.getCellType() == CellType.BLANK) {
-            for (CellRange<?> range : ranges) {
-                if (range.contains(cell)) {
-                    return range.getValue();
-                }
-            }
-        }
-        return null;
     }
 
 
@@ -57,7 +47,7 @@ public class SheetParser {
                 Cell cell = row.getCell(0);
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = lookUpАorRanges(cell);
+                    value = Utils.findInRanges(cell, ranges);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 

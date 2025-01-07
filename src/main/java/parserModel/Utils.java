@@ -1,6 +1,7 @@
 package parserModel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -39,34 +40,57 @@ public class Utils {
     }
 
     public static Object getValue(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        switch (cell.getCellType()) {
-            case STRING:  {
-                return castToDate(cell.getStringCellValue());
-            }
-            case NUMERIC: {
-                return cell.getNumericCellValue();
-            }
-            case BOOLEAN:  {
-                return cell.getBooleanCellValue();
-            }
-            case FORMULA:  {
-                switch (cell.getCachedFormulaResultType()) {
-                    case STRING:  {
-                        return castToDate(cell.getStringCellValue());
-                    }
-                    case NUMERIC: {
-                        return cell.getNumericCellValue();
-                    }
-                    case BOOLEAN:  {
-                        return cell.getBooleanCellValue();
+        Object result = null;
+        if (cell != null && cell.getCellType() != CellType.BLANK) {
+            System.out.printf("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress());
+            switch (cell.getCellType()) {
+                case STRING: {
+                    result = castToDate(cell.getStringCellValue());
+                    break;
+                }
+                case NUMERIC: {
+                    result = cell.getNumericCellValue();
+                    break;
+                }
+                case BOOLEAN: {
+                    result = cell.getBooleanCellValue();
+                    break;
+                }
+                case FORMULA: {
+                    switch (cell.getCachedFormulaResultType()) {
+                        case STRING: {
+                            result = castToDate(cell.getStringCellValue());
+                            break;
+                        }
+                        case NUMERIC: {
+                            result = cell.getNumericCellValue();
+                            break;
+                        }
+                        case BOOLEAN: {
+                            result = cell.getBooleanCellValue();
+                            break;
+                        }
                     }
                 }
             }
+            System.out.printf("Value:[%s] success\n", result);
         }
-        return null;
+
+        return result;
+    }
+
+    public static Object findInRanges(Cell cell, List<CellRange<?>> ranges) {
+        Object result = null;
+        if (cell != null && cell.getCellType() == CellType.BLANK) {
+            for (CellRange<?> range : ranges) {
+                if (range.contains(cell)) {
+                    result = range.getValue();
+                    System.out.printf("Sheet:[%.20s] Cell:[%s] Value{%s] success - from range %s\n", cell.getSheet().getSheetName(),cell.getAddress(), result, range.getAddress().toString().substring(40));
+                    return result;
+                }
+            }
+        }
+        return result;
     }
 
     public static Object castTo(String value) {
