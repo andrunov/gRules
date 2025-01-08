@@ -3,31 +3,18 @@ package ruleEngine;
 import parserModel.FieldDescriptor;
 import parserModel.Utils;
 
-import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 
 public class Condition<V extends Comparable<V>> extends LogicAtom {
 
-    private Field field;
     private V parameter;
     private CompareType compareType;
     private V value;
 
-    public Condition (FieldDescriptor fieldDescriptor) {
-        field = fieldDescriptor.getField();
-        super.parameterPath = fieldDescriptor.getParameterPath();
-        super.parameterType = fieldDescriptor.getType();
-    }
-
-    public Condition() {
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
+    public Condition(FieldDescriptor fieldDescriptor) {
+        super(fieldDescriptor);
     }
 
     public V getParameter() {
@@ -118,6 +105,7 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
 
     @Override
     public String toString() {
+
         StringBuilder sb = new StringBuilder();
         sb.append(Utils.getSimpleName(((Class<?>) parameterType).getName())).append(".");
         int counter = 0;
@@ -129,7 +117,13 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
                 sb.append(String.format("%s ", par));
             }
         }
-        sb.append(String.format("%s %s; ", compareType.getValue(), value));
+        if (value instanceof Calendar) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String dateValue = format.format(((Calendar)value).getTime());
+            sb.append(String.format("%s %s; ", compareType.getValue(), dateValue));
+        } else {
+            sb.append(String.format("%s %s; ", compareType.getValue(), value));
+        }
         return sb.toString();
     }
 }

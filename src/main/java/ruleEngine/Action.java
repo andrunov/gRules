@@ -1,17 +1,17 @@
 package ruleEngine;
 
+import parserModel.FieldDescriptor;
 import parserModel.Utils;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class Action<V> extends LogicAtom {
 
     private Method method;
-    private Field field;
     private V value;
 
-    public Action() {
+    public Action(FieldDescriptor fieldDescriptor) {
+        super(fieldDescriptor);
     }
 
     public Method getMethod() {
@@ -22,13 +22,6 @@ public class Action<V> extends LogicAtom {
         this.method = method;
     }
 
-    public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
-    }
 
     public V getValue() {
         return value;

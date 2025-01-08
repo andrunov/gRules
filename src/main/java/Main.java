@@ -101,7 +101,6 @@ public class Main {
             }
             case 5 : {
                 borrower.setBorrowerType(BorrowerType.OUTER);
-                return;
             }
         }
     }

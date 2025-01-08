@@ -42,7 +42,7 @@ public class Utils {
     public static Object getValue(Cell cell) {
         Object result = null;
         if (cell != null && cell.getCellType() != CellType.BLANK) {
-            System.out.printf("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress());
+            //System.out.printf("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress());
             switch (cell.getCellType()) {
                 case STRING: {
                     result = castToDate(cell.getStringCellValue());
@@ -73,7 +73,7 @@ public class Utils {
                     }
                 }
             }
-            System.out.printf("Value:[%s] success\n", result);
+            //System.out.printf("Value:[%s] success\n", result);
         }
 
         return result;
@@ -85,7 +85,7 @@ public class Utils {
             for (CellRange<?> range : ranges) {
                 if (range.contains(cell)) {
                     result = range.getValue();
-                    System.out.printf("Sheet:[%.20s] Cell:[%s] Value{%s] success - from range %s\n", cell.getSheet().getSheetName(),cell.getAddress(), result, range.getAddress().toString().substring(40));
+                    //System.out.printf("Sheet:[%.20s] Cell:[%s] Value{%s] success - from range %s\n", cell.getSheet().getSheetName(),cell.getAddress(), result, range.getAddress().toString().substring(40));
                     return result;
                 }
             }

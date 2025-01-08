@@ -237,7 +237,7 @@ public class TableRuleParser {
         }
     }
 
-    private <V extends Comparable<V>> List<LineRule> readRules() throws NoSuchFieldException, ClassNotFoundException {
+    private <V extends Comparable<V>> List<LineRule> readRules() {
         List<LineRule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
             LineRule lineRule = new LineRule(0, parentFile, sheet, ruleName,"Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
@@ -250,11 +250,11 @@ public class TableRuleParser {
                 }
 
                 if (conditionColumns.contains(cell.getColumnIndex())) {
-                    Condition<V> condition = new Condition<>();
+                    Condition<V> condition = new Condition<>(conditionMap.get(cell.getColumnIndex()));
                     lineRule.getConditions().add(condition);
-                    condition.setField(conditionMap.get(cell.getColumnIndex()).getField());
-                    condition.setParameterPath(conditionMap.get(cell.getColumnIndex()).getParameterPath());
-                    condition.setParameterType(conditionMap.get(cell.getColumnIndex()).getType());
+                    //condition.setField(conditionMap.get(cell.getColumnIndex()).getField());
+                    //condition.setParameterPath(conditionMap.get(cell.getColumnIndex()).getParameterPath());
+                    //condition.setParameterType(conditionMap.get(cell.getColumnIndex()).getType());
                     CompareType compareType = CompareType.EQUALS;
                     if (value != null && value.getClass().equals(String.class)) {
                         String strValue = (String) value;
@@ -272,11 +272,11 @@ public class TableRuleParser {
                         condition.setValue(value);
                     }
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
-                    Action<V> action = new Action<>();
+                    Action<V> action = new Action<>(actionMap.get(cell.getColumnIndex()));
                     lineRule.getActions().add(action);
-                    action.setField(actionMap.get(cell.getColumnIndex()).getField());
-                    action.setParameterPath(actionMap.get(cell.getColumnIndex()).getParameterPath());
-                    action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());
+                    //action.setField(actionMap.get(cell.getColumnIndex()).getField());
+                    //action.setParameterPath(actionMap.get(cell.getColumnIndex()).getParameterPath());
+                    //action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());
                     if (value instanceof String) {
                         String strValue = (String) value;
                         action.setValue((V) Utils.castTo(strValue));

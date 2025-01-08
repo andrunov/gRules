@@ -1,14 +1,30 @@
 package ruleEngine;
 
+import parserModel.FieldDescriptor;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 
 public abstract class LogicAtom implements Applyable{
 
+    protected Field field;
     protected List<String> parameterPath;
-
     protected Type parameterType;
+
+    public LogicAtom (FieldDescriptor fieldDescriptor) {
+        this.field = fieldDescriptor.getField();
+        this.parameterPath = fieldDescriptor.getParameterPath();
+        this.parameterType = fieldDescriptor.getType();
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
 
     public List<String> getParameterPath() {
         return parameterPath;

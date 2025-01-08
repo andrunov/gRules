@@ -12,8 +12,8 @@ public class LineRule extends BaseRule{
     private final Sheet sheet;
     private final String name;
     private final String title;
-    private final List<Condition<?>> conditions;
-    private final List<Action<?>> actions;
+    private List<Condition<?>> conditions;
+    private List<Action<?>> actions;
 
     public LineRule(int priority, File parentFile, Sheet sheet, String name, String title) {
         super(priority);
@@ -35,6 +35,14 @@ public class LineRule extends BaseRule{
 
     public List<Action<?>> getActions() {
         return actions;
+    }
+
+    public void setConditions(List<Condition<?>> conditions) {
+        this.conditions = conditions;
+    }
+
+    public void setActions(List<Action<?>> actions) {
+        this.actions = actions;
     }
 
     @Override

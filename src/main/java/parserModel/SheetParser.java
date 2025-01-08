@@ -13,6 +13,7 @@ import java.util.List;
 
 public class SheetParser {
 
+    private static final String LINE_RULE = "#linerule";
     private static final String TABLE_RULE = "#tablerule";
 
     private final File parentFile;
@@ -57,6 +58,13 @@ public class SheetParser {
                         TableRuleParser tableRuleParser = new TableRuleParser(parentFile, sheet, ranges, startRow);
                         result.add(tableRuleParser.readRule());
                         i = tableRuleParser.getLastRow();
+
+                    } else if (value.equals(LINE_RULE)) {
+
+                        int startRow = row.getRowNum();
+                        LineRuleParser lineRuleParser = new LineRuleParser(parentFile, sheet, ranges, startRow);
+                        result.add(lineRuleParser.readRule());
+                        i = lineRuleParser.getLastRow();
 
                     }
                 }
