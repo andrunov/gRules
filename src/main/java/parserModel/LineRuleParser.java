@@ -78,8 +78,7 @@ public class LineRuleParser {
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 
-                    if (value.equals(HEAD)) {
-                    } else if (value.equals(PRIORITY)) {
+                    if (value.equals(PRIORITY)) {
                         priorityRow = row.getRowNum();
                     } else if (value.equals(CONDITION)) {
                         conditionRows.add(row.getRowNum());
