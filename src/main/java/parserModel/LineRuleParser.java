@@ -108,8 +108,7 @@ public class LineRuleParser {
                 int spase = ((String) expression).indexOf(' ');
                 String path = ((String) expression).substring(0, spase);
                 String value = ((String) expression).substring(spase + 1);
-                FieldDescriptor fieldDescriptor = FieldDescriptor.from(path);
-                fieldDescriptor.extractFieldAndPar();
+                FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
                 Condition<V> condition = new Condition<>(fieldDescriptor);
                 CompareType compareType = extractFrom(value);
                 condition.setCompareType(compareType);
@@ -138,8 +137,7 @@ public class LineRuleParser {
                 int spase = ((String) expression).indexOf(' ');
                 String path = ((String) expression).substring(0, spase);
                 String value = ((String) expression).substring(spase + 1);
-                FieldDescriptor fieldDescriptor = FieldDescriptor.from(path);
-                fieldDescriptor.extractFieldAndPar();
+                FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
                 Action<V> action = new Action<>(fieldDescriptor);
                 value = cutOffCompareType(value, CompareType.EQUALS);
                 Object enumValue = Utils.parseEnum(value, action.getField());

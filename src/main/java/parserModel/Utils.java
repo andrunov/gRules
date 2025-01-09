@@ -173,6 +173,16 @@ public class Utils {
         return path.substring(lastDot + 1);
     }
 
+    public String removeLineBreaks(String string) {
+        List<Character> characters = new ArrayList<>();
+        for (char charr : string.toCharArray()){
+            if (charr != '\n') {
+                characters.add(charr);
+            }
+        }
+        Character[] newChars = characters.toArray(new Character[0]);
+        return Arrays.toString(newChars);
+    }
 
 
 

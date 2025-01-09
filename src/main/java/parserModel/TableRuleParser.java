@@ -17,17 +17,13 @@ public class TableRuleParser {
     private static final String PRIORITY = "#priority";
     private static final String CONDITION= "#condition";
     private static final String ACTION = "#action";
-    private static final String DIR = "#dir";
-    private static final String CLASS = "#class";
-    private static final String FIELD = "#field";
+    private static final String PATH = "#path";
     private static final String RULE_ROW = "#row";
     private static final String END = "#end";
     private int headRow;
     private int priorityRow;
     private List<Integer> preconditionRows = new ArrayList<>();
-    private List<Integer> dirList = new ArrayList<>();
-    private List<Integer> classList = new ArrayList<>();
-    private List<Integer> fieldList = new ArrayList<>();
+    private List<Integer> pathList = new ArrayList<>();
     private List<Integer> ruleList = new ArrayList<>();
     private List<Integer> conditionColumns = new ArrayList<>();
     private List<Integer> actionColumns = new ArrayList<>();
@@ -58,10 +54,8 @@ public class TableRuleParser {
         TableRule result = new TableRule(getPriority());
         result.setPreConditions(readPreconditions());
         readHeader();
-        readClasses();
-        readFields();
-        readDirs();
-        extractParameters();
+        readPaths();
+       // extractParameters();
         result.setRules(readRules());
         return result;
     }
@@ -103,12 +97,8 @@ public class TableRuleParser {
                         priorityRow = row.getRowNum();
                     } else if (value.equals(CONDITION)) {
                         preconditionRows.add(row.getRowNum());
-                    }  else if (value.equals(DIR)) {
-                        dirList.add(row.getRowNum());
-                    } else if (value.equals(CLASS)) {
-                        classList.add(row.getRowNum());
-                    } else if (value.equals(FIELD)) {
-                        fieldList.add(row.getRowNum());
+                    }  else if (value.equals(PATH)) {
+                        pathList.add(row.getRowNum());
                     } else if (value.equals(RULE_ROW)) {
                         ruleList.add(row.getRowNum());
                     } else if (value.equals(END)) {
@@ -135,8 +125,7 @@ public class TableRuleParser {
                 int spase = ((String) expression).indexOf(' ');
                 String path = ((String) expression).substring(0, spase);
                 String value = ((String) expression).substring(spase + 1);
-                FieldDescriptor fieldDescriptor = FieldDescriptor.from(path);
-                fieldDescriptor.extractFieldAndPar();
+                FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
                 Condition<V> condition = new Condition<>(fieldDescriptor);
                 CompareType compareType = extractFrom(value);
                 condition.setCompareType(compareType);
@@ -169,8 +158,9 @@ public class TableRuleParser {
         }
     }
 
-    private void readDirs() {
-        for (Integer row : dirList) {
+    private void readPaths() throws NoSuchFieldException, ClassNotFoundException {
+        Map<Integer, String> paths = new HashMap<>();
+        for (Integer row : pathList) {
             for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
@@ -178,60 +168,23 @@ public class TableRuleParser {
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
-                    if (conditionColumns.contains(columnIndex)) {
-                        conditionMap.get(columnIndex).setDirName((String) value);
-                    } else if (actionColumns.contains(columnIndex)) {
-                        actionMap.get(columnIndex).setDirName((String) value);
+                    String strValue = (String) value;
+                    strValue = Utils.removeRowSplitters(strValue);
+                    if (!paths.containsKey(columnIndex)) {
+                        paths.put(columnIndex, strValue);
+                    } else {
+                        String newValue = String.format("%s%s", paths.get(columnIndex), strValue);
+                        paths.put(columnIndex, newValue);
                     }
                 }
             }
         }
-    }
-
-    private void extractParameters() throws NoSuchFieldException, ClassNotFoundException {
-        for (FieldDescriptor fieldDescriptor : conditionMap.values()) {
-            fieldDescriptor.extractFieldAndPar();
-        }
-        for (FieldDescriptor fieldDescriptor : actionMap.values()) {
-            fieldDescriptor.extractFieldAndPar();
-        }
-    }
-
-    private void readClasses() {
-        for (Integer row : classList) {
-            for (Cell cell : sheet.getRow(row)) {
-                Object value = Utils.getValue(cell);
-                if (value == null) {
-                    value = Utils.findInRanges(cell, ranges);
-                }
-                if (value != null && value.getClass().equals(String.class)) {
-                    int columnIndex = cell.getColumnIndex();
-                    if (conditionColumns.contains(columnIndex)) {
-                        conditionMap.put(columnIndex, new FieldDescriptor ((String) value));
-                    } else if (actionColumns.contains(columnIndex)) {
-                        actionMap.put(columnIndex, new FieldDescriptor ((String) value));
-                    }
-                }
-            }
-        }
-    }
-
-    private void readFields() {
-        for (Integer row : fieldList) {
-            for (Cell cell : sheet.getRow(row)) {
-                Object value = Utils.getValue(cell);
-                if (value == null) {
-                    value = Utils.findInRanges(cell, ranges);
-                }
-                if (value != null && value.getClass().equals(String.class)) {
-                    int columnIndex = cell.getColumnIndex();
-                    String strValue = Utils.removeRowSplitters((String) value);
-                    if (conditionColumns.contains(columnIndex)) {
-                        conditionMap.get(columnIndex).setFieldName(strValue);
-                    } else if (actionColumns.contains(columnIndex)) {
-                        actionMap.get(columnIndex).setFieldName(strValue);
-                    }
-                }
+        for (Map.Entry<Integer, String> entry : paths.entrySet()) {
+            Integer columnIndex = entry.getKey();
+            if (conditionColumns.contains(columnIndex)) {
+                conditionMap.put(columnIndex, new FieldDescriptor(entry.getValue()));
+            } else if (actionColumns.contains(columnIndex)) {
+                actionMap.put(columnIndex, new FieldDescriptor(entry.getValue()));
             }
         }
     }
@@ -251,9 +204,6 @@ public class TableRuleParser {
                 if (conditionColumns.contains(cell.getColumnIndex())) {
                     Condition<V> condition = new Condition<>(conditionMap.get(cell.getColumnIndex()));
                     lineRule.getConditions().add(condition);
-                    //condition.setField(conditionMap.get(cell.getColumnIndex()).getField());
-                    //condition.setParameterPath(conditionMap.get(cell.getColumnIndex()).getParameterPath());
-                    //condition.setParameterType(conditionMap.get(cell.getColumnIndex()).getType());
                     CompareType compareType = CompareType.EQUALS;
                     if (value != null && value.getClass().equals(String.class)) {
                         String strValue = (String) value;
@@ -273,9 +223,6 @@ public class TableRuleParser {
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
                     Action<V> action = new Action<>(actionMap.get(cell.getColumnIndex()));
                     lineRule.getActions().add(action);
-                    //action.setField(actionMap.get(cell.getColumnIndex()).getField());
-                    //action.setParameterPath(actionMap.get(cell.getColumnIndex()).getParameterPath());
-                    //action.setParameterType(actionMap.get(cell.getColumnIndex()).getType());
                     if (value instanceof String) {
                         String strValue = (String) value;
                         action.setValue((V) Utils.castTo(strValue));
