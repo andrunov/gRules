@@ -1,5 +1,6 @@
 package parserModel;
 
+import exception.ParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,7 +27,7 @@ public class SheetParser {
         this.sheet = sheet;
     }
 
-    public List<BaseRule> readSheet() throws ClassNotFoundException, NoSuchFieldException {
+    public List<BaseRule> readSheet() throws ClassNotFoundException, NoSuchFieldException, ParseException {
         initRanges();
         System.out.println("Read sheet: " + sheet.getSheetName());
         return readSheet(sheet.getFirstRowNum());
@@ -40,7 +41,7 @@ public class SheetParser {
     }
 
 
-    private List<BaseRule> readSheet(int startRowNum) throws NoSuchFieldException, ClassNotFoundException {
+    private List<BaseRule> readSheet(int startRowNum) throws NoSuchFieldException, ClassNotFoundException, ParseException {
         List<BaseRule> result = new ArrayList<>();
         for (int i = startRowNum; i < sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);

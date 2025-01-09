@@ -1,7 +1,7 @@
 package parserModel;
 
+import exception.ParseException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import ruleEngine.*;
@@ -31,16 +31,12 @@ public class TableRuleParser {
     private List<Integer> ruleList = new ArrayList<>();
     private List<Integer> conditionColumns = new ArrayList<>();
     private List<Integer> actionColumns = new ArrayList<>();
-
-    private List<Applyable> preconditions = new ArrayList<>();
     private Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
     private Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
-
     private String ruleName;
     private final File parentFile;
     private final Sheet sheet;
     private final List<CellRange<?>> ranges;
-
     private final int firstRow;
     private int lastRow;
 
@@ -56,7 +52,7 @@ public class TableRuleParser {
         return lastRow;
     }
 
-    public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException {
+    public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException, ParseException {
         readFirstColumn();
         ruleName = getRuleName();
         TableRule result = new TableRule(getPriority());
@@ -90,7 +86,7 @@ public class TableRuleParser {
         return (String) Utils.getValue(row.getCell(1));
     }
 
-    private void readFirstColumn() {
+    private void readFirstColumn() throws ParseException {
         for (int i = firstRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) {
@@ -121,6 +117,9 @@ public class TableRuleParser {
                     }
                 }
             }
+        }
+        if (lastRow == 0) {
+            throw new ParseException(String.format("Not found end of rule File: %s Sheet: %s Row: %s", parentFile, sheet.getSheetName(), firstRow));
         }
     }
 

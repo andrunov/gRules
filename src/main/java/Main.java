@@ -2,6 +2,7 @@ import businessModel.Borrower;
 import businessModel.BorrowerType;
 import businessModel.CreditProgram;
 import businessModel.CreditRequest;
+import exception.ParseException;
 import parserModel.ExcelParser;
 import ruleEngine.BaseRule;
 import ruleEngine.Performable;
@@ -14,7 +15,7 @@ public class Main {
 
     List<BaseRule> rules = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException, ParseException {
         Main main = new Main();
         main.readDir();
         CreditRequest creditRequest = main.initRequest();
@@ -39,7 +40,7 @@ public class Main {
         return creditRequest;
     }
 
-    void readDir() throws IOException, NoSuchFieldException, ClassNotFoundException {
+    void readDir() throws IOException, NoSuchFieldException, ClassNotFoundException, ParseException {
         String basePath = Main.class.getClassLoader().getResource("Rules").getPath();
         File baseDir = new File(basePath);
         for (File file : baseDir.listFiles()) {

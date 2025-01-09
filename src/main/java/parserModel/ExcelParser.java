@@ -1,5 +1,6 @@
 package parserModel;
 
+import exception.ParseException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,7 +21,7 @@ public class ExcelParser {
         this.file = file;
     }
 
-    public List<BaseRule> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException {
+    public List<BaseRule> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException, ParseException {
         FileInputStream stream = new FileInputStream(file);
         System.out.println("Read file: " + file);
         Workbook workbook = new XSSFWorkbook(stream);

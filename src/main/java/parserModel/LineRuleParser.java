@@ -1,5 +1,6 @@
 package parserModel;
 
+import exception.ParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -15,19 +16,13 @@ public class LineRuleParser {
     private static final String CONDITION= "#condition";
     private static final String ACTION = "#action";
     private static final String END = "#end";
-    private int headRow;
     private int priorityRow;
     private List<Integer> conditionRows = new ArrayList<>();
     private List<Integer> actionRows = new ArrayList<>();
-    private List<Integer> classList = new ArrayList<>();
-
-    private List<Applyable> preconditions = new ArrayList<>();
-
     private String ruleName;
     private final File parentFile;
     private final Sheet sheet;
     private final List<CellRange<?>> ranges;
-
     private final int firstRow;
     private int lastRow;
 
@@ -43,7 +38,7 @@ public class LineRuleParser {
         return lastRow;
     }
 
-    public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException {
+    public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException, ParseException {
         readFirstColumn();
         ruleName = getRuleName();
         LineRule result = new LineRule(getPriority(), parentFile, sheet, ruleName, "Строка " + (firstRow + 1));
@@ -72,7 +67,7 @@ public class LineRuleParser {
         return (String) Utils.getValue(row.getCell(1));
     }
 
-    private void readFirstColumn() {
+    private void readFirstColumn() throws ParseException {
         for (int i = firstRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) {
@@ -84,7 +79,6 @@ public class LineRuleParser {
                 if (value != null && value.getClass().equals(String.class)) {
 
                     if (value.equals(HEAD)) {
-                        headRow = row.getRowNum();
                     } else if (value.equals(PRIORITY)) {
                         priorityRow = row.getRowNum();
                     } else if (value.equals(CONDITION)) {
@@ -97,6 +91,9 @@ public class LineRuleParser {
                     }
                 }
             }
+        }
+        if (lastRow == 0) {
+            throw new ParseException(String.format("Not found end of rule File: %s Sheet: %s Row: %s", parentFile, sheet.getSheetName(), firstRow));
         }
     }
 
