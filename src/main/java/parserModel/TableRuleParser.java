@@ -26,42 +26,22 @@ public class TableRuleParser extends BaseRuleParser {
         super(file, sheet, ranges,startRow);
     }
 
+
     public int getLastRow() {
         return lastRow;
     }
 
     public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException, ParseException {
-        readFirstColumn();
-        ruleName = getRuleName();
+        initFields();
         TableRule result = new TableRule(getPriority());
-        result.setPreConditions(readPreconditions());
+        result.setPreConditions(readConditions());
         readHeader();
         readPaths();
         result.setRules(readRules());
         return result;
     }
 
-    private int getPriority() {
-        Double result = null;
-        if (priorityRow > firstRow) {
-            Row row = sheet.getRow(priorityRow);
-            Object value = Utils.getValue(row.getCell(1));
-            result = (Double) value;
-            if (result == null) {
-                result = 0.0;
-            }
-        } else {
-            result = 0.0;
-        }
-        return result.intValue();
-    }
-
-    private String getRuleName() {
-        Row row = sheet.getRow(firstRow);
-        return (String) Utils.getValue(row.getCell(1));
-    }
-
-    private void readFirstColumn() throws ParseException {
+    protected void readFirstColumn() throws ParseException {
         for (int i = firstRow; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) {
@@ -94,34 +74,7 @@ public class TableRuleParser extends BaseRuleParser {
         }
     }
 
-    private <V extends Comparable<V>> List<Condition<?>> readPreconditions() throws NoSuchFieldException, ClassNotFoundException {
-        List<Condition<?>> result = new ArrayList<>();
-        for (int rowNumber : conditionRows) {
-            Cell cell = sheet.getRow(rowNumber).getCell(1);
-            Object expression = Utils.getValue(cell);
-            if (expression == null) {
-                expression = findInRanges(cell);
-            }
-            if (expression != null && expression.getClass().equals(String.class)) {
-                int spase = ((String) expression).indexOf(' ');
-                String path = ((String) expression).substring(0, spase);
-                String value = ((String) expression).substring(spase + 1);
-                FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
-                Condition<V> condition = new Condition<>(fieldDescriptor);
-                CompareType compareType = extractFrom(value);
-                condition.setCompareType(compareType);
-                value = cutOffCompareType(value, compareType);
-                Object enumValue = Utils.parseEnum(value, condition.getField());
-                if (enumValue != null) {
-                    condition.setValue((V) enumValue);
-                } else {
-                    condition.setValue((V) Utils.castTo(value));
-                }
-                result.add(condition);
-            }
-        }
-        return result;
-    }
+
 
     private void readHeader() {
         for (Cell cell : sheet.getRow(headRow)) {
@@ -220,23 +173,6 @@ public class TableRuleParser extends BaseRuleParser {
         return result;
     }
 
-
-    private CompareType extractFrom(String value) {
-        for (CompareType compareType : CompareType.values()) {
-            if (value.startsWith(compareType.getValue())) {
-                return compareType;
-            }
-        }
-        return CompareType.EQUALS;
-    }
-
-    private String cutOffCompareType(String value, CompareType compareType) {
-        if (value.startsWith(compareType.getValue())) {
-             return value.substring(compareType.getValue().length() + 1);
-        }
-        //default if compare type not transferred
-        return value;
-    }
 
 
 }
