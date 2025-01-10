@@ -79,19 +79,7 @@ public class Utils {
         return result;
     }
 
-    public static Object findInRanges(Cell cell, List<CellRange<?>> ranges) {
-        Object result = null;
-        if (cell != null && cell.getCellType() == CellType.BLANK) {
-            for (CellRange<?> range : ranges) {
-                if (range.contains(cell)) {
-                    result = range.getValue();
-                    //System.out.printf("Sheet:[%.20s] Cell:[%s] Value{%s] success - from range %s\n", cell.getSheet().getSheetName(),cell.getAddress(), result, range.getAddress().toString().substring(40));
-                    return result;
-                }
-            }
-        }
-        return result;
-    }
+
 
     public static Object castTo(String value) {
         Object result = castToBoolean(value);

@@ -12,36 +12,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TableRuleParser {
-    private static final String HEAD = "#head";
-    private static final String PRIORITY = "#priority";
-    private static final String CONDITION= "#condition";
-    private static final String ACTION = "#action";
-    private static final String PATH = "#path";
-    private static final String RULE_ROW = "#row";
-    private static final String END = "#end";
+public class TableRuleParser extends BaseRuleParser {
+
     private int headRow;
-    private int priorityRow;
-    private List<Integer> preconditionRows = new ArrayList<>();
     private List<Integer> pathList = new ArrayList<>();
     private List<Integer> ruleList = new ArrayList<>();
     private List<Integer> conditionColumns = new ArrayList<>();
     private List<Integer> actionColumns = new ArrayList<>();
     private Map<Integer, FieldDescriptor> conditionMap = new HashMap<>();
     private Map<Integer, FieldDescriptor> actionMap = new HashMap<>();
-    private String ruleName;
-    private final File parentFile;
-    private final Sheet sheet;
-    private final List<CellRange<?>> ranges;
-    private final int firstRow;
-    private int lastRow;
 
-
-    public TableRuleParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
-        this.parentFile = parentFile;
-        this.sheet = sheet;
-        this.ranges = ranges;
-        this.firstRow = startRow;
+    public TableRuleParser(File file, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
+        super(file, sheet, ranges,startRow);
     }
 
     public int getLastRow() {
@@ -55,7 +37,6 @@ public class TableRuleParser {
         result.setPreConditions(readPreconditions());
         readHeader();
         readPaths();
-       // extractParameters();
         result.setRules(readRules());
         return result;
     }
@@ -87,7 +68,7 @@ public class TableRuleParser {
                 Cell cell = row.getCell(0);
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = Utils.findInRanges(cell, ranges);
+                    value = findInRanges(cell);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 
@@ -96,7 +77,7 @@ public class TableRuleParser {
                     } else if (value.equals(PRIORITY)) {
                         priorityRow = row.getRowNum();
                     } else if (value.equals(CONDITION)) {
-                        preconditionRows.add(row.getRowNum());
+                        conditionRows.add(row.getRowNum());
                     }  else if (value.equals(PATH)) {
                         pathList.add(row.getRowNum());
                     } else if (value.equals(RULE_ROW)) {
@@ -109,17 +90,17 @@ public class TableRuleParser {
             }
         }
         if (lastRow == 0) {
-            throw new ParseException(String.format("Not found end of rule File: %s Sheet: %s Row: %s", parentFile, sheet.getSheetName(), firstRow));
+            throw new ParseException(String.format("Not found end of rule File: %s Sheet: %s Row: %s", file, sheet.getSheetName(), firstRow));
         }
     }
 
     private <V extends Comparable<V>> List<Condition<?>> readPreconditions() throws NoSuchFieldException, ClassNotFoundException {
         List<Condition<?>> result = new ArrayList<>();
-        for (int rowNumber : preconditionRows) {
+        for (int rowNumber : conditionRows) {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
             Object expression = Utils.getValue(cell);
             if (expression == null) {
-                expression = Utils.findInRanges(cell, ranges);
+                expression = findInRanges(cell);
             }
             if (expression != null && expression.getClass().equals(String.class)) {
                 int spase = ((String) expression).indexOf(' ');
@@ -146,7 +127,7 @@ public class TableRuleParser {
         for (Cell cell : sheet.getRow(headRow)) {
             Object value = Utils.getValue(cell);
             if (value== null) {
-                value = Utils.findInRanges(cell, ranges);
+                value = findInRanges(cell);
             }
             if (value!=null && value.getClass().equals(String.class)) {
                 if (value.equals(CONDITION)) {
@@ -164,7 +145,7 @@ public class TableRuleParser {
             for (Cell cell : sheet.getRow(row)) {
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = Utils.findInRanges(cell, ranges);
+                    value = findInRanges(cell);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
@@ -192,13 +173,13 @@ public class TableRuleParser {
     private <V extends Comparable<V>> List<LineRule> readRules() {
         List<LineRule> result = new ArrayList<>();
         for (Integer ruleRow : ruleList) {
-            LineRule lineRule = new LineRule(0, parentFile, sheet, ruleName,"Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
+            LineRule lineRule = new LineRule(0, file, sheet, ruleName,"Строка " + (ruleRow + 1)); //enumeration in sheet starts from 0 and in excell is shown from 1
             result.add(lineRule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {
                 V value = (V) Utils.getValue(cell);
                 if (value == null) {
-                    value = (V) Utils.findInRanges(cell, ranges);
+                    value = (V) findInRanges(cell);
                 }
 
                 if (conditionColumns.contains(cell.getColumnIndex())) {

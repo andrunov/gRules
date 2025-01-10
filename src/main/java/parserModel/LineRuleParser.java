@@ -10,28 +10,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineRuleParser {
-    private static final String HEAD = "#head";
-    private static final String PRIORITY = "#priority";
-    private static final String CONDITION= "#condition";
-    private static final String ACTION = "#action";
-    private static final String END = "#end";
-    private int priorityRow;
-    private List<Integer> conditionRows = new ArrayList<>();
+public class LineRuleParser extends BaseRuleParser {
+
     private List<Integer> actionRows = new ArrayList<>();
-    private String ruleName;
-    private final File parentFile;
-    private final Sheet sheet;
-    private final List<CellRange<?>> ranges;
-    private final int firstRow;
-    private int lastRow;
 
-
-    public LineRuleParser(File parentFile, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
-        this.parentFile = parentFile;
-        this.sheet = sheet;
-        this.ranges = ranges;
-        this.firstRow = startRow;
+    public LineRuleParser(File file, Sheet sheet, List<CellRange<?>> ranges, int startRow) {
+        super(file, sheet, ranges,startRow);
     }
 
     public int getLastRow() {
@@ -41,7 +25,7 @@ public class LineRuleParser {
     public BaseRule readRule() throws ClassNotFoundException, NoSuchFieldException, ParseException {
         readFirstColumn();
         ruleName = getRuleName();
-        LineRule result = new LineRule(getPriority(), parentFile, sheet, ruleName, "Строка " + (firstRow + 1));
+        LineRule result = new LineRule(getPriority(), file, sheet, ruleName, "Строка " + (firstRow + 1));
         result.setConditions(readConditions());
         result.setActions(readActions());
         return result;
@@ -74,7 +58,7 @@ public class LineRuleParser {
                 Cell cell = row.getCell(0);
                 Object value = Utils.getValue(cell);
                 if (value == null) {
-                    value = Utils.findInRanges(cell, ranges);
+                    value = super.findInRanges(cell);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
 
@@ -92,7 +76,7 @@ public class LineRuleParser {
             }
         }
         if (lastRow == 0) {
-            throw new ParseException(String.format("Not found end of rule File: %s Sheet: %s Row: %s", parentFile, sheet.getSheetName(), firstRow));
+            throw new ParseException(String.format("Not found end of rule File: %s Sheet: %s Row: %s", file, sheet.getSheetName(), firstRow));
         }
     }
 
@@ -102,7 +86,7 @@ public class LineRuleParser {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
             Object expression = Utils.getValue(cell);
             if (expression == null) {
-                expression = Utils.findInRanges(cell, ranges);
+                expression = findInRanges(cell);
             }
             if (expression != null && expression.getClass().equals(String.class)) {
                 int spase = ((String) expression).indexOf(' ');
@@ -131,7 +115,7 @@ public class LineRuleParser {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
             Object expression = Utils.getValue(cell);
             if (expression == null) {
-                expression = Utils.findInRanges(cell, ranges);
+                expression = findInRanges(cell);
             }
             if (expression != null && expression.getClass().equals(String.class)) {
                 int spase = ((String) expression).indexOf(' ');

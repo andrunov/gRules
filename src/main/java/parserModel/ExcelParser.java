@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ExcelParser {
-
-    private final File file;
+/*
+parser fo read excel file
+ */
+public class ExcelParser extends BaseExcelParser {
 
     public ExcelParser(File file) {
-        this.file = file;
+        super(file);
     }
 
     public List<BaseRule> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException, ParseException {
