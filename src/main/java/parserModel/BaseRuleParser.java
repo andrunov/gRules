@@ -11,6 +11,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/* consists all common fields and logic
+necessary for read rule
+ */
 public abstract class BaseRuleParser extends BaseSheetParser {
 
     protected int priorityRow;
@@ -29,7 +32,7 @@ public abstract class BaseRuleParser extends BaseSheetParser {
         Double result = null;
         if (priorityRow > firstRow) {
             Row row = sheet.getRow(priorityRow);
-            Object value = Utils.getValue(row.getCell(1));
+            Object value = getValue(row.getCell(1));
             result = (Double) value;
             if (result == null) {
                 result = 0.0;
@@ -42,14 +45,14 @@ public abstract class BaseRuleParser extends BaseSheetParser {
 
     protected String getRuleName() {
         Row row = sheet.getRow(firstRow);
-        return (String) Utils.getValue(row.getCell(1));
+        return (String) getValue(row.getCell(1));
     }
 
     protected  <V extends Comparable<V>> List<Condition<?>> readConditions() throws NoSuchFieldException, ClassNotFoundException {
         List<Condition<?>> result = new ArrayList<>();
         for (int rowNumber : conditionRows) {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
-            Object expression = Utils.getValue(cell);
+            Object expression = getValue(cell);
             if (expression == null) {
                 expression = findInRanges(cell);
             }
@@ -62,11 +65,11 @@ public abstract class BaseRuleParser extends BaseSheetParser {
                 CompareType compareType = extractFrom(value);
                 condition.setCompareType(compareType);
                 value = cutOffCompareType(value, compareType);
-                Object enumValue = Utils.parseEnum(value, condition.getField());
+                Object enumValue = parseEnum(value, condition.getField());
                 if (enumValue != null) {
                     condition.setValue((V) enumValue);
                 } else {
-                    condition.setValue((V) Utils.castTo(value));
+                    condition.setValue((V) castTo(value));
                 }
                 result.add(condition);
             }

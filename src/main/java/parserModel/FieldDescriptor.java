@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/* class for describe fields
+have been red from excel
+ */
 public class FieldDescriptor {
 
     private final Class<?> type;

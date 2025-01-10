@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*
-parser fo read excel file
+/* starts read excel file
+and then delegate it to sheet parser
  */
 public class ExcelParser extends BaseExcelParser {
 

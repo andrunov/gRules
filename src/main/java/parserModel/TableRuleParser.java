@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/* reads TableRule class from excel
+ */
 public class TableRuleParser extends BaseRuleParser {
 
     private int headRow;
@@ -46,7 +48,7 @@ public class TableRuleParser extends BaseRuleParser {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                Object value = Utils.getValue(cell);
+                Object value = getValue(cell);
                 if (value == null) {
                     value = findInRanges(cell);
                 }
@@ -78,7 +80,7 @@ public class TableRuleParser extends BaseRuleParser {
 
     private void readHeader() {
         for (Cell cell : sheet.getRow(headRow)) {
-            Object value = Utils.getValue(cell);
+            Object value = getValue(cell);
             if (value== null) {
                 value = findInRanges(cell);
             }
@@ -96,14 +98,14 @@ public class TableRuleParser extends BaseRuleParser {
         Map<Integer, String> paths = new HashMap<>();
         for (Integer row : pathList) {
             for (Cell cell : sheet.getRow(row)) {
-                Object value = Utils.getValue(cell);
+                Object value = getValue(cell);
                 if (value == null) {
                     value = findInRanges(cell);
                 }
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
                     String strValue = (String) value;
-                    strValue = Utils.removeRowSplitters(strValue);
+                    strValue = removeRowSplitters(strValue);
                     if (!paths.containsKey(columnIndex)) {
                         paths.put(columnIndex, strValue);
                     } else {
@@ -130,7 +132,7 @@ public class TableRuleParser extends BaseRuleParser {
             result.add(lineRule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {
-                V value = (V) Utils.getValue(cell);
+                V value = (V) getValue(cell);
                 if (value == null) {
                     value = (V) findInRanges(cell);
                 }
@@ -144,11 +146,11 @@ public class TableRuleParser extends BaseRuleParser {
                         compareType = extractFrom(strValue);
                         condition.setCompareType(compareType);
                         strValue = cutOffCompareType(strValue, compareType);
-                        Object enumValue = Utils.parseEnum(strValue, condition.getField());
+                        Object enumValue = parseEnum(strValue, condition.getField());
                         if (enumValue != null) {
                             condition.setValue((V) enumValue);
                         } else {
-                            condition.setValue((V) Utils.castTo(strValue));
+                            condition.setValue((V) castTo(strValue));
                         }
                     } else {
                         condition.setCompareType(compareType);
@@ -159,7 +161,7 @@ public class TableRuleParser extends BaseRuleParser {
                     lineRule.getActions().add(action);
                     if (value instanceof String) {
                         String strValue = (String) value;
-                        action.setValue((V) Utils.castTo(strValue));
+                        action.setValue((V) castTo(strValue));
                     } else if (value instanceof Double) {
                         Double dounleValue = (Double) value;
                         dounleValue = Math.ceil(dounleValue * 100) / 100;

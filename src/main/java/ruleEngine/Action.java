@@ -1,7 +1,6 @@
 package ruleEngine;
 
 import parserModel.FieldDescriptor;
-import parserModel.Utils;
 
 import java.lang.reflect.Method;
 
@@ -58,7 +57,7 @@ public class Action<V> extends LogicAtom {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(Utils.getSimpleName(((Class<?>) parameterType).getName())).append(".");
+        sb.append(getSimpleName(((Class<?>) parameterType).getName())).append(".");
         sb.append(field.getName());
         sb.append("=").append(value).append("; ");
         return sb.toString();

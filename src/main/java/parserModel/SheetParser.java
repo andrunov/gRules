@@ -8,9 +8,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import ruleEngine.BaseRule;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/* starts read excel sheet
+and then delegate it to rule parsers
+ */
 public class SheetParser extends BaseSheetParser {
 
     public SheetParser(File file, Sheet sheet) {
@@ -26,7 +30,12 @@ public class SheetParser extends BaseSheetParser {
     private void initRanges() throws ClassNotFoundException {
         ranges = new ArrayList<>();
         for (CellRangeAddress range : sheet.getMergedRegions()) {
-            ranges.add(CellRange.of(range, sheet));
+            Cell firstCell = sheet.getRow(range.getFirstRow()).getCell(range.getFirstColumn());
+            Type valueType = getValueType(firstCell);
+            Object value = getValue(firstCell);
+            assert valueType != null;
+            Class<?> theClass = Class.forName(valueType.getTypeName());
+            ranges.add(new CellRange<>(range, valueType, theClass.cast(value)));
         }
     }
 
@@ -37,7 +46,7 @@ public class SheetParser extends BaseSheetParser {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                Object value = Utils.getValue(cell);
+                Object value = getValue(cell);
                 if (value == null) {
                     value = findInRanges(cell);
                 }

@@ -89,4 +89,9 @@ public abstract class LogicAtom implements Applyable{
             return extract(obj, startIndex + 1, depth);
         }
     }
+
+    protected String getSimpleName(String path) {
+        int lastDot = path.lastIndexOf('.');
+        return path.substring(lastDot + 1);
+    }
 }

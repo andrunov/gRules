@@ -10,6 +10,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/* reads LineRule class from excel
+ */
 public class LineRuleParser extends BaseRuleParser {
 
     private List<Integer> actionRows = new ArrayList<>();
@@ -35,7 +37,7 @@ public class LineRuleParser extends BaseRuleParser {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                Object value = Utils.getValue(cell);
+                Object value = getValue(cell);
                 if (value == null) {
                     value = super.findInRanges(cell);
                 }
@@ -64,7 +66,7 @@ public class LineRuleParser extends BaseRuleParser {
         List<Action<?>> result = new ArrayList<>();
         for (int rowNumber : actionRows) {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
-            Object expression = Utils.getValue(cell);
+            Object expression = getValue(cell);
             if (expression == null) {
                 expression = findInRanges(cell);
             }
@@ -75,11 +77,11 @@ public class LineRuleParser extends BaseRuleParser {
                 FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
                 Action<V> action = new Action<>(fieldDescriptor);
                 value = cutOffCompareType(value, CompareType.EQUALS);
-                Object enumValue = Utils.parseEnum(value, action.getField());
+                Object enumValue = parseEnum(value, action.getField());
                 if (enumValue != null) {
                     action.setValue((V) enumValue);
                 } else {
-                    action.setValue((V) Utils.castTo(value));
+                    action.setValue((V) castTo(value));
                 }
                 result.add(action);
             }

@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.List;
 
 /*
-consist all fields and logic
+consist all common fields and logic
 necessary for read single excel list
  */
 public abstract class BaseSheetParser extends BaseExcelParser {
