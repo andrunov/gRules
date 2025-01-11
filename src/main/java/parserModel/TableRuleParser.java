@@ -139,35 +139,39 @@ public class TableRuleParser extends BaseRuleParser {
 
                 if (conditionColumns.contains(cell.getColumnIndex())) {
                     Condition<V> condition = new Condition<>(conditionMap.get(cell.getColumnIndex()));
-                    lineRule.getConditions().add(condition);
-                    CompareType compareType = CompareType.EQUALS;
-                    if (value != null && value.getClass().equals(String.class)) {
-                        String strValue = (String) value;
-                        compareType = extractFrom(strValue);
-                        condition.setCompareType(compareType);
-                        strValue = cutOffCompareType(strValue, compareType);
-                        Object enumValue = parseEnum(strValue, condition.getField());
-                        if (enumValue != null) {
-                            condition.setValue((V) enumValue);
+                    if (value != null) {
+                        lineRule.getConditions().add(condition);
+                        CompareType compareType = CompareType.EQUALS;
+                        if (value.getClass().equals(String.class)) {
+                            String strValue = (String) value;
+                            compareType = extractFrom(strValue);
+                            condition.setCompareType(compareType);
+                            strValue = cutOffCompareType(strValue, compareType);
+                            Object enumValue = parseEnum(strValue, condition.getField());
+                            if (enumValue != null) {
+                                condition.setValue((V) enumValue);
+                            } else {
+                                condition.setValue((V) castTo(strValue));
+                            }
                         } else {
-                            condition.setValue((V) castTo(strValue));
+                            condition.setCompareType(compareType);
+                            condition.setValue(value);
                         }
-                    } else {
-                        condition.setCompareType(compareType);
-                        condition.setValue(value);
                     }
                 } else if (actionColumns.contains(cell.getColumnIndex())) {
                     Action<V> action = new Action<>(actionMap.get(cell.getColumnIndex()));
                     lineRule.getActions().add(action);
-                    if (value instanceof String) {
-                        String strValue = (String) value;
-                        action.setValue((V) castTo(strValue));
-                    } else if (value instanceof Double) {
-                        Double dounleValue = (Double) value;
-                        dounleValue = Math.ceil(dounleValue * 100) / 100;
-                        action.setValue((V) dounleValue);
-                    } else {
-                        action.setValue(value);
+                    if (value != null) {
+                        if (value instanceof String) {
+                            String strValue = (String) value;
+                            action.setValue((V) castTo(strValue));
+                        } else if (value instanceof Double) {
+                            Double dounleValue = (Double) value;
+                            dounleValue = Math.ceil(dounleValue * 100) / 100;
+                            action.setValue((V) dounleValue);
+                        } else {
+                            action.setValue(value);
+                        }
                     }
                 }
             }

@@ -1,7 +1,4 @@
-import businessModel.Borrower;
-import businessModel.BorrowerType;
-import businessModel.CreditProgram;
-import businessModel.CreditRequest;
+import businessModel.*;
 import exception.ParseException;
 import parserModel.ExcelParser;
 import ruleEngine.BaseRule;
@@ -33,6 +30,7 @@ public class Main {
         CreditRequest creditRequest = new CreditRequest();
         Calendar calendar = new GregorianCalendar(2024,Calendar.JULY, 1);
         creditRequest.setApplicDate(calendar);
+        creditRequest.setPrepayPercent(-1);
         Borrower borrower = new Borrower();
         borrower.setSalaryClient(true);
        // borrower.setBorrowerType(BorrowerType.GAZPROM);
@@ -67,7 +65,15 @@ public class Main {
 
     private void complete(CreditRequest creditRequest) {
         Scanner in = new Scanner(System.in);
-        if (creditRequest.getProgramCode() == null || creditRequest.getProgramCode().isEmpty()) {
+        if (creditRequest.getCreditType() == null) {
+            System.out.print("Введите тип программы: \n1 - Ипотека\n2 - Потребительский кредит \n");
+            int number = in.nextInt();
+            if (number == 1) {
+                creditRequest.setCreditType(CreditType.MORTGAGE);
+            } else if (number == 2) {
+                creditRequest.setCreditType(CreditType.CONSUMER);
+            }
+        } else if (creditRequest.getProgramCode() == null || creditRequest.getProgramCode().isEmpty()) {
             System.out.print("Введите номер программы: \n");
             String prog = in.next();
             creditRequest.setProgramCode(prog);
@@ -79,6 +85,18 @@ public class Main {
             System.out.print("Введите тип заемщика: \n1 - GAZPROM\n2 - GAZPROM_GROUP\n3 - BANK\n4 - OTHER\n5 - OUTER\n");
             int number = in.nextInt();
             setBorrowerType(creditRequest.getBorrower(), number);
+        } else if (creditRequest.getMarketType() == null) {
+            System.out.print("Введите тип рынка: \n1 - Первичный\n2 - Вторичный\n");
+            int number = in.nextInt();
+            if (number == 1) {
+                creditRequest.setMarketType(MarketType.PRIMARY_MARKET);
+            } else if (number == 2) {
+                creditRequest.setMarketType(MarketType.SECONDARY_MARKET);
+            }
+        } else if (creditRequest.getPrepayPercent() == -1) {
+            System.out.print("Введите первоначальный (о1т 1 до 100 процентов)\n");
+            double number = in.nextDouble();
+            creditRequest.setPrepayPercent(number);
         }
     }
 
@@ -110,6 +128,8 @@ public class Main {
         creditRequest.setProgramCode(null);
         creditRequest.setCreditQty(0);
         creditRequest.getBorrower().setBorrowerType(null);
+        creditRequest.setCreditType(null);
+        creditRequest.setPrepayPercent(-1);
     }
 
 }

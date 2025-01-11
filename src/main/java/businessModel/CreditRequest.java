@@ -5,12 +5,15 @@ import java.util.Calendar;
 
 public class CreditRequest {
 
+    private CreditType creditType;
     private Calendar applicDate;
     private String programCode;
     private double creditQty;
     private double duration;
+    private double prepayPercent;
     private double rate;
     private Borrower borrower;
+    private MarketType marketType;
 
     public CreditRequest(String programCode, int creditQty) {
         this.programCode = programCode;
@@ -18,7 +21,22 @@ public class CreditRequest {
     }
 
     public boolean isComplete() {
-        return this.programCode != null && !this.programCode.isEmpty() && this.creditQty != 0 && borrower.getBorrowerType() != null;
+        if (creditType == null) {
+            return false;
+        } else if (creditType == CreditType.CONSUMER) {
+            return this.programCode != null
+                    && !this.programCode.isEmpty()
+                    && this.creditQty != 0
+                    && borrower.getBorrowerType() != null;
+        } else if (creditType == CreditType.MORTGAGE) {
+            return this.programCode != null
+                    && !this.programCode.isEmpty()
+                    && this.creditQty != 0
+                    && this.prepayPercent != -1
+                    && this.marketType != null
+                    && borrower.getBorrowerType() != null;
+        }
+        return false;
     }
 
     public CreditRequest() {
@@ -72,6 +90,30 @@ public class CreditRequest {
         this.duration = duration;
     }
 
+    public MarketType getMarketType() {
+        return marketType;
+    }
+
+    public void setMarketType(MarketType marketType) {
+        this.marketType = marketType;
+    }
+
+    public CreditType getCreditType() {
+        return creditType;
+    }
+
+    public void setCreditType(CreditType creditType) {
+        this.creditType = creditType;
+    }
+
+    public double getPrepayPercent() {
+        return prepayPercent;
+    }
+
+    public void setPrepayPercent(double prepayPercent) {
+        this.prepayPercent = prepayPercent;
+    }
+
     @Override
     public String toString() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -79,7 +121,13 @@ public class CreditRequest {
         final StringBuilder sb = new StringBuilder("CreditRequest{");
         sb.append("applicDate=").append(strDate);
         sb.append(", programCode='").append(programCode).append('\'');
+        if (creditType == CreditType.MORTGAGE) {
+            sb.append(", marketType=").append(marketType);
+        }
         sb.append(", creditQty=").append(creditQty);
+        if (creditType == CreditType.MORTGAGE) {
+            sb.append(", prepayPercent=").append(prepayPercent);
+        }
         sb.append(", duration=").append(duration);
         sb.append(", rate=").append(rate);
         sb.append(", borrower=").append(borrower);
