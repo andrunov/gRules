@@ -6,13 +6,14 @@ import ruleEngine.Performable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Main {
 
     List<BaseRule> rules = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException, ParseException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchFieldException, ParseException, InvocationTargetException, IllegalAccessException {
         Main main = new Main();
         main.readDir();
         CreditRequest creditRequest = main.initRequest();
@@ -47,7 +48,7 @@ public class Main {
         }
     }
 
-    void perform(CreditRequest creditRequest) {
+    void perform(CreditRequest creditRequest) throws NoSuchFieldException, InvocationTargetException, IllegalAccessException {
         CreditProgram creditProgram = new CreditProgram();
         System.out.println();
         System.out.println("RULES STARTED");
@@ -130,6 +131,7 @@ public class Main {
         creditRequest.getBorrower().setBorrowerType(null);
         creditRequest.setCreditType(null);
         creditRequest.setPrepayPercent(-1);
+        creditRequest.setMarketType(null);
     }
 
 }

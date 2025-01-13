@@ -1,5 +1,6 @@
 package ruleEngine;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class TableRule extends BaseRule{
@@ -31,8 +32,14 @@ public class TableRule extends BaseRule{
     @Override
     public void perform(Object... parameters) {
         for ( Condition<?> condition : preConditions) {
-            if (!condition.selectAndApply(parameters)) {
-                return;
+            try {
+                if (!condition.selectAndApply(parameters)) {
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.printf("%s %s%n", condition, e.getMessage());
+                //TODO replase with Logger error
+                // throw new RuntimeException(String.format("%s %s", condition, e.getMessage()));
             }
         }
         for ( LineRule lineRule : lineRules) {

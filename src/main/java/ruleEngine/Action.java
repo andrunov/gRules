@@ -2,6 +2,7 @@ package ruleEngine;
 
 import parserModel.FieldDescriptor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class Action<V> extends LogicAtom {
@@ -30,27 +31,20 @@ public class Action<V> extends LogicAtom {
         this.value = value;
     }
 
-    public boolean apply(Object globalParameter) {
+    public boolean apply(Object globalParameter) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException {
 
         boolean result = false;
+        V parameter = (V) extract(globalParameter, 1);
 
-
-        try {
-
-            V parameter = (V) extract(globalParameter, 1);
-
-            if (field != null) {
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-                field.set(parameter, value);
-            } else if (method != null) {
-                method.invoke(parameter, value);
+        if (field != null) {
+            if (!field.isAccessible()) {
+                field.setAccessible(true);
             }
-            result = true;
-        } catch (Exception e) {
-            return result;
+            field.set(parameter, value);
+        } else if (method != null) {
+            method.invoke(parameter, value);
         }
+            result = true;
         return result;
     }
 

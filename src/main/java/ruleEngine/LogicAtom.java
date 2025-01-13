@@ -3,6 +3,7 @@ package ruleEngine;
 import parserModel.FieldDescriptor;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public abstract class LogicAtom implements Applyable{
         return result;
     }
 
-    public boolean selectAndApply(Object ... parameters) {
+    public boolean selectAndApply(Object ... parameters) throws NoSuchFieldException, InvocationTargetException, IllegalAccessException {
         boolean result = false;
         Object parameter = select(parameters);
         if (parameter != null) {

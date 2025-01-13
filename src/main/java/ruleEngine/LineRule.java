@@ -3,6 +3,7 @@ package ruleEngine;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,12 +49,24 @@ public class LineRule extends BaseRule{
     @Override
     public void perform(Object ... parameters) {
         for ( Condition<?> condition : conditions) {
-            if (!condition.selectAndApply(parameters)) {
-                return;
+            try {
+                if (!condition.selectAndApply(parameters)) {
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.printf("%s %s%n", condition, e.getMessage());
+                //TODO replase with Logger error
+                //throw new RuntimeException(String.format("%s %s", condition, e.getMessage()));
             }
         }
         for ( Action<?> action :actions) {
-            action.selectAndApply(parameters);
+            try {
+                action.selectAndApply(parameters);
+            } catch (Exception e) {
+                System.out.printf("%s %s%n", action, e.getMessage());
+                //TODO replase with Logger error
+                //throw new RuntimeException(String.format("%s %s", action, e.getMessage()));
+            }
         }
         System.out.println(this);
     }

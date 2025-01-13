@@ -41,18 +41,14 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
     }
 
     @Override
-    public boolean apply(Object globalParameter) {
+    public boolean apply(Object globalParameter) throws NoSuchFieldException, IllegalAccessException {
 
         boolean result = false;
-
-        try {
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
-            this.parameter = (V) extract(globalParameter, 0);
-        } catch (Exception e) {
-            return result;
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
         }
+
+        this.parameter = (V) extract(globalParameter, 0);
 
         switch (compareType){
 
