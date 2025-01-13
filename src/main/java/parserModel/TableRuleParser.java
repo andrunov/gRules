@@ -147,12 +147,7 @@ public class TableRuleParser extends BaseRuleParser {
                             compareType = extractFrom(strValue);
                             condition.setCompareType(compareType);
                             strValue = cutOffCompareType(strValue, compareType);
-                            Object enumValue = parseEnum(strValue, condition.getField());
-                            if (enumValue != null) {
-                                condition.setValue((V) enumValue);
-                            } else {
-                                condition.setValue((V) castTo(strValue));
-                            }
+                            condition.setValue((V) parseFrom(strValue, condition.getField().getType()));
                         } else {
                             condition.setCompareType(compareType);
                             condition.setValue(value);
@@ -162,13 +157,13 @@ public class TableRuleParser extends BaseRuleParser {
                     Action<V> action = new Action<>(actionMap.get(cell.getColumnIndex()));
                     lineRule.getActions().add(action);
                     if (value != null) {
-                        if (value instanceof String) {
+                        if (value.getClass().equals(String.class)) {
                             String strValue = (String) value;
-                            action.setValue((V) castTo(strValue));
-                        } else if (value instanceof Double) {
-                            Double dounleValue = (Double) value;
-                            dounleValue = Math.ceil(dounleValue * 100) / 100;
-                            action.setValue((V) dounleValue);
+                            action.setValue((V) parseFrom(strValue, action.getField().getType()));
+                        } else if (value.getClass().equals(Double.class)) {
+                            Double doubleValue = (Double) value;
+                            doubleValue = Math.ceil(doubleValue * 100) / 100;
+                            action.setValue((V) doubleValue);
                         } else {
                             action.setValue(value);
                         }

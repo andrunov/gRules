@@ -65,7 +65,7 @@ public abstract class BaseExcelParser {
             //System.out.printf("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress());
             switch (cell.getCellType()) {
                 case STRING: {
-                    result = castToDate(cell.getStringCellValue());
+                    result = parseDate(cell.getStringCellValue());
                     break;
                 }
                 case NUMERIC: {
@@ -79,7 +79,7 @@ public abstract class BaseExcelParser {
                 case FORMULA: {
                     switch (cell.getCachedFormulaResultType()) {
                         case STRING: {
-                            result = castToDate(cell.getStringCellValue());
+                            result = parseDate(cell.getStringCellValue());
                             break;
                         }
                         case NUMERIC: {
@@ -98,7 +98,7 @@ public abstract class BaseExcelParser {
         return result;
     }
 
-    protected Object castToDate(String value) {
+    protected Object parseDate(String value) {
         Object result = value;
         if (value.startsWith("date")) {
             SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -114,18 +114,24 @@ public abstract class BaseExcelParser {
         return result;
     }
 
-    protected Object castTo(String value) {
-        Object result = castToBoolean(value);
-        if (result.getClass().equals(String.class)) {
-            result = castToDouble(value);
+    protected Object parseFrom(String value, Class<?> clazz) {
+        Object result = null;
+        if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
+            result = parseBoolean(value);
+        } else if (clazz.equals(double.class) || clazz.equals(Double.class)) {
+            result = parseDouble(value);
+        } else if (clazz.equals(Calendar.class) || clazz.equals(GregorianCalendar.class)) {
+            result = parseDate(value);
+        } else {
+            result = parseEnum(value, clazz);
         }
-        if (result.getClass().equals(String.class)) {
-            result = castToDate(value);
+        if (result == null) {
+            result = value;
         }
         return result;
     }
 
-    protected Object castToBoolean(String value) {
+    protected Object parseBoolean(String value) {
         Object result = value;
         if (value.equalsIgnoreCase("true")
                 || value.equalsIgnoreCase("false")) {
@@ -134,7 +140,7 @@ public abstract class BaseExcelParser {
         return result;
     }
 
-    protected Object castToDouble(String value) {
+    protected Object parseDouble(String value) {
         Object result = value;
         try {
             result = Double.parseDouble(value);
@@ -161,10 +167,9 @@ public abstract class BaseExcelParser {
         return new String(result);
     }
 
-    protected Object parseEnum(String strValue, Field field) {
-        Class<?> clazz = field.getType();
+    protected Object parseEnum(String strValue, Class<?> clazz) {
         if (clazz.isEnum()) {
-            for (Object enumVal : field.getType().getEnumConstants()) {
+            for (Object enumVal : clazz.getEnumConstants()) {
                 if (enumVal.toString().equals(strValue)) {
                     return enumVal;
                 }

@@ -65,12 +65,7 @@ public abstract class BaseRuleParser extends BaseSheetParser {
                 CompareType compareType = extractFrom(value);
                 condition.setCompareType(compareType);
                 value = cutOffCompareType(value, compareType);
-                Object enumValue = parseEnum(value, condition.getField());
-                if (enumValue != null) {
-                    condition.setValue((V) enumValue);
-                } else {
-                    condition.setValue((V) castTo(value));
-                }
+                condition.setValue((V) parseFrom(value, condition.getField().getType()));
                 result.add(condition);
             }
         }

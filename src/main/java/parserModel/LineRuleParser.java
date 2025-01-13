@@ -77,12 +77,7 @@ public class LineRuleParser extends BaseRuleParser {
                 FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
                 Action<V> action = new Action<>(fieldDescriptor);
                 value = cutOffCompareType(value, CompareType.EQUALS);
-                Object enumValue = parseEnum(value, action.getField());
-                if (enumValue != null) {
-                    action.setValue((V) enumValue);
-                } else {
-                    action.setValue((V) castTo(value));
-                }
+                action.setValue((V) parseFrom(value, action.getField().getType()));
                 result.add(action);
             }
         }
