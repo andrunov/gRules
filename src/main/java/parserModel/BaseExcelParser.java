@@ -65,7 +65,7 @@ public abstract class BaseExcelParser {
             //System.out.printf("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress());
             switch (cell.getCellType()) {
                 case STRING: {
-                    result = parseDate(cell.getStringCellValue());
+                    result = cell.getStringCellValue();
                     break;
                 }
                 case NUMERIC: {
@@ -79,7 +79,7 @@ public abstract class BaseExcelParser {
                 case FORMULA: {
                     switch (cell.getCachedFormulaResultType()) {
                         case STRING: {
-                            result = parseDate(cell.getStringCellValue());
+                            result = cell.getStringCellValue();
                             break;
                         }
                         case NUMERIC: {
@@ -99,7 +99,7 @@ public abstract class BaseExcelParser {
     }
 
     protected Object parseDate(String value) {
-        Object result = value;
+        Object result = null;
         if (value.startsWith("date")) {
             SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
             try {
@@ -115,9 +115,9 @@ public abstract class BaseExcelParser {
     }
 
     protected Object parseFrom(String value, Class<?> clazz) {
-        Object result = null;
+        Object result;
         if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
-            result = parseBoolean(value);
+            result = Boolean.parseBoolean(value);;
         } else if (clazz.equals(double.class) || clazz.equals(Double.class)) {
             result = parseDouble(value);
         } else if (clazz.equals(Calendar.class) || clazz.equals(GregorianCalendar.class)) {
@@ -131,20 +131,11 @@ public abstract class BaseExcelParser {
         return result;
     }
 
-    protected Object parseBoolean(String value) {
-        Object result = value;
-        if (value.equalsIgnoreCase("true")
-                || value.equalsIgnoreCase("false")) {
-            result = Boolean.parseBoolean(value);
-        }
-        return result;
-    }
-
     protected Object parseDouble(String value) {
-        Object result = value;
+        Object result = null;
         try {
-            result = Double.parseDouble(value);
-        } catch (Exception e) {
+            result = Double.parseDouble(value.replace(',','.'));
+        } catch (Exception ignored) {
 
         }
         return result;
