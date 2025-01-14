@@ -1,9 +1,13 @@
 package ruleEngine;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 
 public class TableRule extends BaseRule{
 
+    private static final Logger LOG = LogManager.getLogger();
     private List<Condition<?>> preConditions;
     private List<LineRule> lineRules;
 
@@ -36,9 +40,8 @@ public class TableRule extends BaseRule{
                     return;
                 }
             } catch (Exception e) {
-                System.out.printf("%s %s%n", condition, e.getMessage());
-                //TODO replase with Logger error
-                // throw new RuntimeException(String.format("%s %s", condition, e.getMessage()));
+                LOG.error(String.format("Applying error in condition %s", condition));
+                LOG.error(e);
             }
         }
         for ( LineRule lineRule : lineRules) {

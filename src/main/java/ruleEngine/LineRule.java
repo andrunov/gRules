@@ -1,5 +1,7 @@
 package ruleEngine;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.File;
@@ -8,6 +10,7 @@ import java.util.List;
 
 public class LineRule extends BaseRule{
 
+    private static final Logger LOG = LogManager.getLogger();
     private final File parentFile;
     private final Sheet sheet;
     private final String name;
@@ -53,21 +56,19 @@ public class LineRule extends BaseRule{
                     return;
                 }
             } catch (Exception e) {
-                System.out.printf("%s %s%n", condition, e.getMessage());
-                //TODO replase with Logger error
-                //throw new RuntimeException(String.format("%s %s", condition, e.getMessage()));
+                LOG.error(String.format("Applying error in condition %s", condition));
+                LOG.error(e);
             }
         }
         for ( Action<?> action :actions) {
             try {
                 action.selectAndApply(parameters);
             } catch (Exception e) {
-                System.out.printf("%s %s%n", action, e.getMessage());
-                //TODO replase with Logger error
-                //throw new RuntimeException(String.format("%s %s", action, e.getMessage()));
+                LOG.error(String.format("Applying error in action %s", action));
+                LOG.error(e);
             }
         }
-        System.out.println(this);
+        LOG.info(this);
     }
 
 
