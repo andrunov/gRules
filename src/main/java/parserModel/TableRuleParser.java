@@ -48,10 +48,7 @@ public class TableRuleParser extends BaseRuleParser {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                Object value = getValue(cell);
-                if (value == null) {
-                    value = findInRanges(cell);
-                }
+                Object value = getWithFinding(cell);
                 if (value != null && value.getClass().equals(String.class)) {
 
                     if (value.equals(HEAD)) {
@@ -80,10 +77,7 @@ public class TableRuleParser extends BaseRuleParser {
 
     private void readHeader() {
         for (Cell cell : sheet.getRow(headRow)) {
-            Object value = getValue(cell);
-            if (value== null) {
-                value = findInRanges(cell);
-            }
+            Object value = getWithFinding(cell);
             if (value!=null && value.getClass().equals(String.class)) {
                 if (value.equals(CONDITION)) {
                    conditionColumns.add(cell.getColumnIndex());
@@ -98,10 +92,7 @@ public class TableRuleParser extends BaseRuleParser {
         Map<Integer, String> paths = new HashMap<>();
         for (Integer row : pathList) {
             for (Cell cell : sheet.getRow(row)) {
-                Object value = getValue(cell);
-                if (value == null) {
-                    value = findInRanges(cell);
-                }
+                Object value = getWithFinding(cell);
                 if (value != null && value.getClass().equals(String.class)) {
                     int columnIndex = cell.getColumnIndex();
                     String strValue = (String) value;
@@ -132,41 +123,17 @@ public class TableRuleParser extends BaseRuleParser {
             result.add(lineRule);
 
             for (Cell cell : sheet.getRow(ruleRow)) {
-                V value = (V) getValue(cell);
-                if (value == null) {
-                    value = (V) findInRanges(cell);
-                }
 
-                if (conditionColumns.contains(cell.getColumnIndex())) {
-                    Condition<V> condition = new Condition<>(conditionMap.get(cell.getColumnIndex()));
-                    if (value != null) {
-                        lineRule.getConditions().add(condition);
-                        CompareType compareType = CompareType.EQUALS;
-                        if (value.getClass().equals(String.class)) {
-                            String strValue = (String) value;
-                            compareType = extractFrom(strValue);
-                            condition.setCompareType(compareType);
-                            strValue = cutOffCompareType(strValue, compareType);
-                            condition.setValue((V) parseFrom(strValue, condition.getField().getType()));
-                        } else {
-                            condition.setCompareType(compareType);
-                            condition.setValue(value);
-                        }
-                    }
-                } else if (actionColumns.contains(cell.getColumnIndex())) {
-                    Action<V> action = new Action<>(actionMap.get(cell.getColumnIndex()));
-                    lineRule.getActions().add(action);
-                    if (value != null) {
-                        if (value.getClass().equals(String.class)) {
-                            String strValue = (String) value;
-                            action.setValue((V) parseFrom(strValue, action.getField().getType()));
-                        } else if (value.getClass().equals(Double.class)) {
-                            Double doubleValue = (Double) value;
-                            doubleValue = Math.ceil(doubleValue * 100) / 100;
-                            action.setValue((V) doubleValue);
-                        } else {
-                            action.setValue(value);
-                        }
+                V value = (V) getWithFinding(cell);
+
+                if (value != null) {
+                    if (conditionColumns.contains(cell.getColumnIndex())) {
+                        FieldDescriptor fieldDescriptor = conditionMap.get(cell.getColumnIndex());
+                        lineRule.getConditions().add(createCondition(fieldDescriptor, value));
+
+                    } else if (actionColumns.contains(cell.getColumnIndex())) {
+                        FieldDescriptor fieldDescriptor = actionMap.get(cell.getColumnIndex());
+                        lineRule.getActions().add(createAction(fieldDescriptor, value));
                     }
                 }
             }
@@ -174,6 +141,36 @@ public class TableRuleParser extends BaseRuleParser {
         return result;
     }
 
+    private <V extends Comparable<V>> Condition<V> createCondition(FieldDescriptor fieldDescriptor, V value) {
+        Condition<V> condition = new Condition<>(fieldDescriptor);
+        CompareType compareType = CompareType.EQUALS;
+        if (value.getClass().equals(String.class)) {
+            String strValue = (String) value;
+            compareType = extractFrom(strValue);
+            condition.setCompareType(compareType);
+            strValue = cutOffCompareType(strValue, compareType);
+            condition.setValue(parseFrom(strValue, condition.getField().getType()));
+        } else {
+            condition.setCompareType(compareType);
+            condition.setValue(value);
+        }
+        return condition;
+    }
+
+    private <V> Action<V> createAction(FieldDescriptor fieldDescriptor, V value) {
+        Action<V> action = new Action<>(fieldDescriptor);
+        if (value.getClass().equals(String.class)) {
+            String strValue = (String) value;
+            action.setValue(parseFrom(strValue, action.getField().getType()));
+        } else if (value.getClass().equals(Double.class)) {
+            Double doubleValue = (Double) value;
+            doubleValue = Math.ceil(doubleValue * 100) / 100;
+            action.setValue((V) doubleValue);
+        } else {
+            action.setValue(value);
+        }
+        return action;
+    }
 
 
 }

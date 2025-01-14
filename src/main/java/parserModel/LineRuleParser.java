@@ -37,10 +37,7 @@ public class LineRuleParser extends BaseRuleParser {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                Object value = getValue(cell);
-                if (value == null) {
-                    value = super.findInRanges(cell);
-                }
+                Object value = getWithFinding(cell);
                 if (value != null && value.getClass().equals(String.class)) {
 
                     if (value.equals(PRIORITY)) {
@@ -66,10 +63,7 @@ public class LineRuleParser extends BaseRuleParser {
         List<Action<?>> result = new ArrayList<>();
         for (int rowNumber : actionRows) {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
-            Object expression = getValue(cell);
-            if (expression == null) {
-                expression = findInRanges(cell);
-            }
+            Object expression = getWithFinding(cell);
             if (expression != null && expression.getClass().equals(String.class)) {
                 int spase = ((String) expression).indexOf(' ');
                 String path = ((String) expression).substring(0, spase);
@@ -77,7 +71,7 @@ public class LineRuleParser extends BaseRuleParser {
                 FieldDescriptor fieldDescriptor = new FieldDescriptor(path);
                 Action<V> action = new Action<>(fieldDescriptor);
                 value = cutOffCompareType(value, CompareType.EQUALS);
-                action.setValue((V) parseFrom(value, action.getField().getType()));
+                action.setValue(parseFrom(value, action.getField().getType()));
                 result.add(action);
             }
         }

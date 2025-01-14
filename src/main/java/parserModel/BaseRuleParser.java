@@ -32,7 +32,7 @@ public abstract class BaseRuleParser extends BaseSheetParser {
         Double result = null;
         if (priorityRow > firstRow) {
             Row row = sheet.getRow(priorityRow);
-            Object value = getValue(row.getCell(1));
+            Object value = getWithFinding(row.getCell(1));
             result = (Double) value;
             if (result == null) {
                 result = 0.0;
@@ -45,17 +45,14 @@ public abstract class BaseRuleParser extends BaseSheetParser {
 
     protected String getRuleName() {
         Row row = sheet.getRow(firstRow);
-        return (String) getValue(row.getCell(1));
+        return (String) getWithFinding(row.getCell(1));
     }
 
     protected  <V extends Comparable<V>> List<Condition<?>> readConditions() throws NoSuchFieldException, ClassNotFoundException {
         List<Condition<?>> result = new ArrayList<>();
         for (int rowNumber : conditionRows) {
             Cell cell = sheet.getRow(rowNumber).getCell(1);
-            Object expression = getValue(cell);
-            if (expression == null) {
-                expression = findInRanges(cell);
-            }
+            Object expression = getWithFinding(cell);
             if (expression != null && expression.getClass().equals(String.class)) {
                 int spase = ((String) expression).indexOf(' ');
                 String path = ((String) expression).substring(0, spase);
@@ -65,7 +62,7 @@ public abstract class BaseRuleParser extends BaseSheetParser {
                 CompareType compareType = extractFrom(value);
                 condition.setCompareType(compareType);
                 value = cutOffCompareType(value, compareType);
-                condition.setValue((V) parseFrom(value, condition.getField().getType()));
+                condition.setValue(parseFrom(value, condition.getField().getType()));
                 result.add(condition);
             }
         }

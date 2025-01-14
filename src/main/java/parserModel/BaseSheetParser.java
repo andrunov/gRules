@@ -33,4 +33,14 @@ public abstract class BaseSheetParser extends BaseExcelParser {
         }
         return result;
     }
+
+    protected Object getWithFinding(Cell cell) {
+        Object value = getValue(cell);
+        if (value == null) {
+            value = findInRanges(cell);
+        }
+        return value;
+    }
+
+
 }

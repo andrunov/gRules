@@ -4,7 +4,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,7 +113,7 @@ public abstract class BaseExcelParser {
         return result;
     }
 
-    protected Object parseFrom(String value, Class<?> clazz) {
+    protected <V> V parseFrom(String value, Class<?> clazz) {
         Object result;
         if (clazz.equals(boolean.class) || clazz.equals(Boolean.class)) {
             result = Boolean.parseBoolean(value);;
@@ -128,7 +127,7 @@ public abstract class BaseExcelParser {
         if (result == null) {
             result = value;
         }
-        return result;
+        return (V) result;
     }
 
     protected Object parseDouble(String value) {

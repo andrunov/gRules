@@ -46,10 +46,7 @@ public class SheetParser extends BaseSheetParser {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
-                Object value = getValue(cell);
-                if (value == null) {
-                    value = findInRanges(cell);
-                }
+                Object value = getWithFinding(cell);
                 if (value != null && value.getClass().equals(String.class)) {
 
                     if (value.equals(TABLE_RULE)) {

@@ -1,6 +1,5 @@
 package ruleEngine;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class TableRule extends BaseRule{
