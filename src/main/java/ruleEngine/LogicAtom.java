@@ -7,11 +7,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public abstract class LogicAtom implements Applyable{
+public abstract class LogicAtom<V> implements Applyable{
 
     protected Field field;
     protected List<String> parameterPath;
     protected Type parameterType;
+    protected V value;
+
 
     public LogicAtom (FieldDescriptor fieldDescriptor) {
         this.field = fieldDescriptor.getField();
@@ -43,6 +45,14 @@ public abstract class LogicAtom implements Applyable{
         this.parameterType = parameterType;
     }
 
+    public V getValue() {
+        return value;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+
     @Override
     public Object select(Object ... parameters) {
         Object result = null;
@@ -65,11 +75,11 @@ public abstract class LogicAtom implements Applyable{
     }
 
     @Override
-    public Object extract(Object globalParameter, int depth) throws NoSuchFieldException, IllegalAccessException {
+    public V extract(Object globalParameter, int depth) throws NoSuchFieldException, IllegalAccessException {
         return extract(globalParameter, 0, depth);
     }
 
-    private Object extract(Object globalParameter, int startIndex, int depth) throws NoSuchFieldException, IllegalAccessException {
+    private V extract(Object globalParameter, int startIndex, int depth) throws NoSuchFieldException, IllegalAccessException {
         Field field = globalParameter.getClass().getDeclaredField(parameterPath.get(startIndex));
         if (!field.isAccessible()) {
             field.setAccessible(true);
@@ -81,9 +91,9 @@ public abstract class LogicAtom implements Applyable{
             1 - return Object last founded in hierarchy
              */
             if (depth == 0) {
-                return obj;
+                return (V) obj;
             } else if (depth == 1) {
-                return globalParameter;
+                return (V) globalParameter;
             }
             return null;
         } else {

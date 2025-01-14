@@ -6,11 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 
-public class Condition<V extends Comparable<V>> extends LogicAtom {
+public class Condition<V extends Comparable<V>> extends LogicAtom<V> {
 
     private V parameter;
     private CompareType compareType;
-    private V value;
 
     public Condition(FieldDescriptor fieldDescriptor) {
         super(fieldDescriptor);
@@ -32,14 +31,6 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
         this.compareType = compareType;
     }
 
-    public V getValue() {
-        return value;
-    }
-
-    public void setValue(V value) {
-        this.value = value;
-    }
-
     @Override
     public boolean apply(Object globalParameter) throws NoSuchFieldException, IllegalAccessException {
 
@@ -48,7 +39,7 @@ public class Condition<V extends Comparable<V>> extends LogicAtom {
             field.setAccessible(true);
         }
 
-        this.parameter = (V) extract(globalParameter, 0);
+        this.parameter = extract(globalParameter, 0);
 
         switch (compareType){
 

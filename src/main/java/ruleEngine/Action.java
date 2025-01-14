@@ -5,10 +5,9 @@ import parserModel.FieldDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class Action<V> extends LogicAtom {
+public class Action<V> extends LogicAtom<V> {
 
     private Method method;
-    private V value;
 
     public Action(FieldDescriptor fieldDescriptor) {
         super(fieldDescriptor);
@@ -20,15 +19,6 @@ public class Action<V> extends LogicAtom {
 
     public void setMethod(Method method) {
         this.method = method;
-    }
-
-
-    public V getValue() {
-        return value;
-    }
-
-    public void setValue(V value) {
-        this.value = value;
     }
 
     public boolean apply(Object globalParameter) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException {
