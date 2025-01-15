@@ -1,6 +1,8 @@
 package parserModel;
 
 import exception.ParseException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,13 +19,15 @@ and then delegate it to rule parsers
  */
 public class SheetParser extends BaseSheetParser {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     public SheetParser(File file, Sheet sheet) {
         super(file, sheet);
     }
 
     public List<BaseRule> readSheet() throws ClassNotFoundException, NoSuchFieldException, ParseException {
         initRanges();
-        System.out.println("Read sheet: " + sheet.getSheetName());
+        LOG.info(String.format("Read sheet: %s", sheet.getSheetName()));
         return readSheet(sheet.getFirstRowNum());
     }
 

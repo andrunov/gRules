@@ -1,6 +1,8 @@
 package parserModel;
 
 import exception.ParseException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,13 +20,14 @@ and then delegate it to sheet parser
  */
 public class ExcelParser extends BaseExcelParser {
 
+    private static final Logger LOG = LogManager.getLogger();
     public ExcelParser(File file) {
         super(file);
     }
 
     public List<BaseRule> readFile() throws IOException, NoSuchFieldException, ClassNotFoundException, ParseException {
         FileInputStream stream = new FileInputStream(file);
-        System.out.println("Read file: " + file);
+        LOG.info(String.format("Read file: %s", file));
         Workbook workbook = new XSSFWorkbook(stream);
         Iterator<Sheet> iterator = workbook.sheetIterator();
         List<BaseRule> performables = new ArrayList<>();
@@ -33,8 +36,7 @@ public class ExcelParser extends BaseExcelParser {
             SheetParser parser = new SheetParser(file, sheet);
             performables.addAll(parser.readSheet());
         }
-        System.out.println("Read file finished");
-        System.out.println();
+        LOG.info("Read file finished\n");
         return performables;
     }
 }

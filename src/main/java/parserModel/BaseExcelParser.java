@@ -1,5 +1,7 @@
 package parserModel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -14,6 +16,7 @@ necessary for read single excel book
 and all constants */
 public abstract class BaseExcelParser {
 
+    private static final Logger LOG = LogManager.getLogger();
     protected static final String LINE_RULE = "#linerule";
     protected static final String TABLE_RULE = "#tablerule";
     protected static final String HEAD = "#head";
@@ -61,7 +64,7 @@ public abstract class BaseExcelParser {
     protected Object getValue(Cell cell) {
         Object result = null;
         if (cell != null && cell.getCellType() != CellType.BLANK) {
-            //System.out.printf("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress());
+            //LOG.info(String.format("Sheet:[%.20s] Cell:[%s] ", cell.getSheet().getSheetName(),cell.getAddress()));
             switch (cell.getCellType()) {
                 case STRING: {
                     result = cell.getStringCellValue();
@@ -92,7 +95,7 @@ public abstract class BaseExcelParser {
                     }
                 }
             }
-            //System.out.printf("Value:[%s] success\n", result);
+            //LOG.info(String.format("Value:[%s] success\n", result));
         }
         return result;
     }

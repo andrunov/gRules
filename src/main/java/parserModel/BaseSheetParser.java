@@ -1,5 +1,7 @@
 package parserModel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -12,6 +14,8 @@ consist all common fields and logic
 necessary for read single excel list
  */
 public abstract class BaseSheetParser extends BaseExcelParser {
+
+    private static final Logger LOG = LogManager.getLogger();
     protected final Sheet sheet;
     protected List<CellRange<?>> ranges;
 
@@ -26,7 +30,7 @@ public abstract class BaseSheetParser extends BaseExcelParser {
             for (CellRange<?> range : ranges) {
                 if (range.contains(cell)) {
                     result = range.getValue();
-                    //System.out.printf("Sheet:[%.20s] Cell:[%s] Value{%s] success - from range %s\n", cell.getSheet().getSheetName(),cell.getAddress(), result, range.getAddress().toString().substring(40));
+                    //LOG.info(String.format("Sheet:[%.20s] Cell:[%s] Value{%s] success - from range %s\n", cell.getSheet().getSheetName(),cell.getAddress(), result, range.getAddress().toString().substring(40)));
                     return result;
                 }
             }
