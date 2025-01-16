@@ -9,8 +9,8 @@
             <artifactId>spring-boot-starter-parent</artifactId>
             <version>3.4.1</version>
     </parent>
-    <groupId>org.grules</groupId>
-    <artifactId>gRules</artifactId>
+    <groupId>ru.gpb</groupId>
+    <artifactId>grules</artifactId>
     <version>1.0</version>
     <name>Grules</name>
     <description>Decision management system</description>
