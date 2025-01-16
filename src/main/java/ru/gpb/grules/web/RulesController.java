@@ -1,16 +1,16 @@
 package ru.gpb.grules.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import ru.gpb.grules.businessModel.CreditProgram;
-import ru.gpb.grules.businessModel.CreditRequest;
-import ru.gpb.grules.businessModel.CreditType;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.gpb.grules.businessModel.CreditProgram;
+import ru.gpb.grules.businessModel.CreditRequest;
+import ru.gpb.grules.businessModel.CreditType;
 import ru.gpb.grules.ruleEngine.RuleEngine;
 
 import java.net.URI;

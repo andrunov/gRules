@@ -3,13 +3,10 @@ package ru.gpb.grules.ruleEngine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import ru.gpb.grules.Application;
 import ru.gpb.grules.Console;
 import ru.gpb.grules.businessModel.CreditProgram;
-import ru.gpb.grules.businessModel.CreditRequest;
 import ru.gpb.grules.exception.ParseException;
 import ru.gpb.grules.parserModel.ExcelParser;
 
