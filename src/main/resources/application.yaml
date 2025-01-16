@@ -11,7 +11,7 @@ spring:
 logging:
   level:
     root: WARN
-    #ru.javaops.topjava: DEBUG
+    ru.gpb.grules: INFO
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
 
 server.servlet:

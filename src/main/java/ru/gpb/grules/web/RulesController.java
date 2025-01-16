@@ -1,5 +1,7 @@
 package ru.gpb.grules.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.gpb.grules.businessModel.CreditProgram;
 import ru.gpb.grules.businessModel.CreditRequest;
 import ru.gpb.grules.businessModel.CreditType;
 import jakarta.validation.Valid;
@@ -9,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.gpb.grules.ruleEngine.RuleEngine;
 
 import java.net.URI;
 
@@ -19,12 +22,18 @@ public class RulesController {
     private static final Logger LOG = LogManager.getLogger();
     static final String REST_URL = "/rules";
 
+    @Autowired
+    protected RuleEngine ruleEngine;
+
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> createWithLocation(@Valid @RequestBody CreditRequest request) {
-        //LOG.info("create {}", user);
+    public ResponseEntity<Response> createWithLocation(@Valid @RequestBody CreditRequest creditRequest) {
+        LOG.info(creditRequest);
+        CreditProgram creditProgram = new CreditProgram();
+        ruleEngine.perform(creditRequest , creditProgram);
         Response response = new Response();
-        response.creditRequest = request;
+        response.creditRequest = creditRequest;
+        response.creditProgram = creditProgram;
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).buildAndExpand().toUri();
         return ResponseEntity.created(uriOfNewResource).body(response);

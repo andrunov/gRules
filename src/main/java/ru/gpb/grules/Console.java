@@ -50,7 +50,7 @@ public class Console {
         }
     }
 
-    void perform(CreditRequest creditRequest) throws NoSuchFieldException, InvocationTargetException, IllegalAccessException {
+    void perform(CreditRequest creditRequest) {
         CreditProgram creditProgram = new CreditProgram();
         System.out.println();
         System.out.println("RULES STARTED");
