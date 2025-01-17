@@ -106,9 +106,9 @@ public class Condition<V extends Comparable<V>> extends LogicAtom<V> {
         if (value instanceof Calendar) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             String dateValue = format.format(((Calendar)value).getTime());
-            sb.append(String.format("%s %s; ", compareType.getValue(), dateValue));
+            sb.append(String.format("%s %s", compareType.getValue(), dateValue));
         } else {
-            sb.append(String.format("%s %s; ", compareType.getValue(), value));
+            sb.append(String.format("%s %s", compareType.getValue(), value));
         }
         return sb.toString();
     }

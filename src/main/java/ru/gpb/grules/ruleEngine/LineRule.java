@@ -68,9 +68,26 @@ public class LineRule extends BaseRule{
                 LOG.error(e);
             }
         }
-        LOG.info(this);
+        LOG.info(this.info());
     }
 
+    public String info() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Выполнено правило: ");
+        sb.append("\n Файл: ").append(parentFile.getName());
+        sb.append("; Лист: ").append(sheet.getSheetName());
+        sb.append("; Правило: ").append(name);
+        sb.append("; ").append(title);
+        sb.append("\n Условия: ");
+        for (Condition<?> condition : conditions ) {
+            sb.append(" ").append(condition.toString()).append(";");
+        }
+        sb.append("\n Действия: ");
+        for (Action<?> action : actions ) {
+            sb.append(" ").append(action.toString()).append(";");
+        }
+        return sb.toString();
+    }
 
     @Override
     public String toString() {

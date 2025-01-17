@@ -37,10 +37,10 @@ public class RuleEngine {
 
     public void perform(Object ...args) {
         CreditProgram creditProgram = new CreditProgram();
-        LOG.info("\nRULES STARTED\n------------------\n");
+        LOG.info("RULES STARTED");
         for (Performable performable : rules) {
             performable.perform(args);
         }
-        LOG.info("\nRULES FINISHED\n------------------\n");
+        LOG.info("RULES FINISHED");
     }
 }

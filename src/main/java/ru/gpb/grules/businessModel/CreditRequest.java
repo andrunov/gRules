@@ -1,13 +1,18 @@
 package ru.gpb.grules.businessModel;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CreditRequest {
 
     private CreditType creditType;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Calendar applicDate;
     private String programCode;
+
     private double creditQty;
     private double duration;
     private double prepayPercent;
@@ -126,10 +131,10 @@ public class CreditRequest {
         }
         sb.append(", creditQty=").append(creditQty);
         if (creditType == CreditType.MORTGAGE) {
-            sb.append(", prepayPercent=").append(prepayPercent);
+            sb.append(String.format(", prepayPercent=%.1f", prepayPercent));
         }
-        sb.append(", duration=").append(duration);
-        sb.append(", rate=").append(rate);
+        sb.append(String.format(", duration=%.0f", duration));
+        sb.append(String.format(", rate=%.1f", rate));
         sb.append(", borrower=").append(borrower);
         sb.append('}');
         return sb.toString();

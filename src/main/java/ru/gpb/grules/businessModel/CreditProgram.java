@@ -1,5 +1,7 @@
 package ru.gpb.grules.businessModel;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class CreditProgram {
     private String name;
     private String code;
@@ -70,11 +72,11 @@ public class CreditProgram {
         final StringBuilder sb = new StringBuilder("CreditProgram{");
         sb.append("name='").append(name).append('\'');
         sb.append(", code='").append(code).append('\'');
-        sb.append(", rate=").append(rate);
-        sb.append(", minQuantity=").append(minQuantity);
-        sb.append(", maxQuantity=").append(maxQuantity);
-        sb.append(", minDuration=").append(minDuration);
-        sb.append(", maxDuration=").append(maxDuration);
+        sb.append(String.format(", rate=%.1f", rate));
+        sb.append(String.format(", minQuantity=%.0f", minQuantity));
+        sb.append(String.format(", maxQuantity=%.0f", maxQuantity));
+        sb.append(String.format(", minDuration=%.0f", minDuration));
+        sb.append(String.format(", maxDuration=%.0f", maxDuration));
         sb.append('}');
         return sb.toString();
     }

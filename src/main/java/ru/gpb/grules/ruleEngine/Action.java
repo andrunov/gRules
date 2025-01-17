@@ -43,7 +43,7 @@ public class Action<V> extends LogicAtom<V> {
         final StringBuilder sb = new StringBuilder();
         sb.append(getSimpleName(((Class<?>) parameterType).getName())).append(".");
         sb.append(field.getName());
-        sb.append("=").append(value).append("; ");
+        sb.append("=").append(value);
         return sb.toString();
     }
 }

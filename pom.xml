@@ -63,10 +63,13 @@
         </dependency>
 
         <!-- jackson -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.2</version>
         </dependency>
+
 
         <!-- Logger -->
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
