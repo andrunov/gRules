@@ -3,7 +3,6 @@ package ru.gpb.grules.businessModel;
 public class Borrower {
     private double age;
     private boolean salaryClient;
-
     private BorrowerType borrowerType;
 
     public double getAge() {

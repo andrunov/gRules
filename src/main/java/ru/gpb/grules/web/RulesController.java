@@ -12,6 +12,7 @@ import ru.gpb.grules.businessModel.CreditProgram;
 import ru.gpb.grules.businessModel.CreditRequest;
 import ru.gpb.grules.businessModel.CreditType;
 import ru.gpb.grules.ruleEngine.RuleEngine;
+import ru.gpb.grules.validation.ErrorValidation;
 
 import java.net.URI;
 
@@ -29,11 +30,20 @@ public class RulesController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> createWithLocation(@Valid @RequestBody CreditRequest creditRequest) {
         LOG.info(creditRequest);
+
         CreditProgram creditProgram = new CreditProgram();
         ruleEngine.perform(creditRequest , creditProgram);
+
+        ErrorValidation errorValidation = new ErrorValidation(creditRequest, creditProgram);
+        String errorMessage = errorValidation.validate();
+
         Response response = new Response();
         response.creditRequest = creditRequest;
         response.creditProgram = creditProgram;
+        response.errors = errorMessage;
+        response.warnings = "";
+        response.info = "";
+
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).buildAndExpand().toUri();
         return ResponseEntity.created(uriOfNewResource).body(response);

@@ -1,12 +1,14 @@
 package ru.gpb.grules.businessModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CreditRequest {
 
+    @JsonIgnore
     private CreditType creditType;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
