@@ -24,25 +24,25 @@ public class ErrorValidation {
     }
 
     private void minimumSum() {
-        if (creditRequest.getCreditQty() <= creditProgram.getMinQuantity()) {
+        if (creditRequest.getCreditQty() < creditProgram.getMinQuantity()) {
             sb.append("Сумма кредита меньше минимальной!; ");
         }
     }
 
     private void maximumSum() {
-        if (creditRequest.getCreditQty() >= creditProgram.getMaxQuantity()) {
+        if (creditRequest.getCreditQty() > creditProgram.getMaxQuantity()) {
             sb.append("Сумма кредита больше максимальной!; ");
         }
     }
 
     private void minimumDuration() {
-        if (creditRequest.getDuration() <= creditProgram.getMinDuration()) {
+        if (creditRequest.getDuration() < creditProgram.getMinDuration()) {
             sb.append("Срок кредита меньше минимального!; ");
         }
     }
 
     private void maximumDuration() {
-        if (creditRequest.getDuration() >= creditProgram.getMaxDuration()) {
+        if (creditRequest.getDuration() > creditProgram.getMaxDuration()) {
             sb.append("Срок кредита больше максимального!; ");
         }
     }

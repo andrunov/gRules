@@ -1,7 +1,6 @@
 package ru.gpb.grules.businessModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,11 +12,9 @@ public class CreditRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Calendar applicDate;
     private String programCode;
-
     private double creditQty;
     private double duration;
     private double prepayPercent;
-    private double rate;
     private Borrower borrower;
     private MarketType marketType;
 
@@ -80,14 +77,6 @@ public class CreditRequest {
         this.creditQty = creditQty;
     }
 
-    public double getRate() {
-        return rate;
-    }
-
-    public void setRate(double rate) {
-        this.rate = rate;
-    }
-
     public double getDuration() {
         return duration;
     }
@@ -135,7 +124,6 @@ public class CreditRequest {
             sb.append(String.format(", prepayPercent=%.1f", prepayPercent));
         }
         sb.append(String.format(", duration=%.0f", duration));
-        sb.append(String.format(", rate=%.1f", rate));
         sb.append(", borrower=").append(borrower);
         sb.append('}');
         return sb.toString();
