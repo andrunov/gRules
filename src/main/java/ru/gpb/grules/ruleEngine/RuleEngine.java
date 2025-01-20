@@ -28,11 +28,19 @@ public class RuleEngine {
         rules = new ArrayList<>();
         String basePath = Console.class.getClassLoader().getResource(RULES_PATH).getPath();
         File baseDir = new File(basePath);
-        for (File file : baseDir.listFiles()) {
-            ExcelParser parser = new ExcelParser(file);
-            rules.addAll(parser.readFile());
-        }
+        readRecursion(baseDir);
         Collections.sort(rules);
+    }
+
+    private void readRecursion(File dir) throws IOException, ParseException, NoSuchFieldException, ClassNotFoundException {
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                readRecursion(file);
+            } else if (file.getName().endsWith(".xlsx")) {
+                ExcelParser parser = new ExcelParser(file);
+                rules.addAll(parser.readFile());
+            }
+        }
     }
 
     public void perform(Object ...args) {

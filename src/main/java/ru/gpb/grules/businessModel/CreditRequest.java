@@ -8,7 +8,6 @@ import java.util.Calendar;
 
 public class CreditRequest {
 
-    @JsonIgnore
     private CreditType creditType;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
