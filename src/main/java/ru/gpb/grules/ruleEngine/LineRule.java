@@ -49,11 +49,11 @@ public class LineRule extends BaseRule{
     }
 
     @Override
-    public void perform(Object ... parameters) {
+    public String perform(Object ... parameters) {
         for ( Condition<?> condition : conditions) {
             try {
                 if (!condition.selectAndApply(parameters)) {
-                    return;
+                    return null;
                 }
             } catch (Exception e) {
                 LOG.error(String.format("Applying error in condition %s", condition));
@@ -69,12 +69,21 @@ public class LineRule extends BaseRule{
             }
         }
         LOG.info(this.info());
+        return this.shortInfo();
+    }
+
+    public String shortInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[Файл: ").append(getRepresentiveName(parentFile.getAbsolutePath()));
+        sb.append("; Лист: ").append(sheet.getSheetName());
+        sb.append("; ").append(title).append("]; ");
+        return sb.toString();
     }
 
     public String info() {
         StringBuilder sb = new StringBuilder();
         sb.append("Выполнено правило: ");
-        sb.append("\n Файл: ").append(parentFile.getName());
+        sb.append("\n Файл: ").append(getRepresentiveName(parentFile.getAbsolutePath()));
         sb.append("; Лист: ").append(sheet.getSheetName());
         sb.append("; Правило: ").append(name);
         sb.append("; ").append(title);
@@ -93,7 +102,7 @@ public class LineRule extends BaseRule{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Правило : ");
-        sb.append(parentFile.getName());
+        sb.append(getRepresentiveName(parentFile.getAbsolutePath()));
         sb.append(" : ");
         sb.append(sheet.getSheetName());
         sb.append(" : ");
@@ -112,5 +121,9 @@ public class LineRule extends BaseRule{
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    private String getRepresentiveName(String path) {
+        return path.substring(path.indexOf("\\Rules"));
     }
 }

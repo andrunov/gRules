@@ -33,19 +33,24 @@ public class TableRule extends BaseRule{
     }
 
     @Override
-    public void perform(Object... parameters) {
+    public String perform(Object... parameters) {
         for ( Condition<?> condition : preConditions) {
             try {
                 if (!condition.selectAndApply(parameters)) {
-                    return;
+                    return null;
                 }
             } catch (Exception e) {
                 LOG.error(String.format("Applying error in condition %s", condition));
                 LOG.error(e);
             }
         }
+        StringBuilder sb = new StringBuilder();
         for ( LineRule lineRule : lineRules) {
-            lineRule.perform(parameters);
+            String result = lineRule.perform(parameters);
+            if (result != null) {
+                sb.append(result);
+            }
         }
+        return sb.toString();
     }
 }

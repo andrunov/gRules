@@ -6,7 +6,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import ru.gpb.grules.Console;
-import ru.gpb.grules.businessModel.CreditProgram;
 import ru.gpb.grules.exception.ParseException;
 import ru.gpb.grules.parserModel.ExcelParser;
 
@@ -43,12 +42,16 @@ public class RuleEngine {
         }
     }
 
-    public void perform(Object ...args) {
-        CreditProgram creditProgram = new CreditProgram();
+    public String performRules(Object ...args) {
         LOG.info("RULES STARTED");
+        StringBuilder sb = new StringBuilder();
         for (Performable performable : rules) {
-            performable.perform(args);
+            String result = performable.perform(args);
+            if (result != null) {
+                sb.append(result);
+            }
         }
         LOG.info("RULES FINISHED");
+        return sb.toString();
     }
 }

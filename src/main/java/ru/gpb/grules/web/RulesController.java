@@ -32,7 +32,7 @@ public class RulesController {
         LOG.info(creditRequest);
 
         CreditProgram creditProgram = new CreditProgram();
-        ruleEngine.perform(creditRequest , creditProgram);
+        String rulesReport = ruleEngine.performRules(creditRequest , creditProgram);
 
         ErrorValidation errorValidation = new ErrorValidation(creditRequest, creditProgram);
         String errorMessage = errorValidation.validate();
@@ -42,7 +42,7 @@ public class RulesController {
         response.creditProgram = creditProgram;
         response.errors = errorMessage;
         response.warnings = "";
-        response.info = "";
+        response.info = rulesReport;
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).buildAndExpand().toUri();
