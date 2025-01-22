@@ -164,7 +164,7 @@ public class TableRuleParser extends BaseRuleParser {
             action.setValue(parseFrom(strValue, action.getField().getType()));
         } else if (value.getClass().equals(Double.class)) {
             Double doubleValue = (Double) value;
-            doubleValue = Math.ceil(doubleValue * 100) / 100;
+            doubleValue = (double) Math.round(doubleValue * 100) / 100;
             action.setValue((V) doubleValue);
         } else {
             action.setValue(value);
